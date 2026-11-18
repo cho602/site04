@@ -355,7 +355,7 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
   </div>
   <section class="panel reco" aria-roledescription="carousel" aria-labelledby="reco-h">
     <div class="reco-head">
-      <div><h2 id="reco-h">내가 추천하는 책</h2><p class="note" id="reco-note">책숲 주인이 직접 고르고 추천 이유를 적은 책이에요.</p></div>
+      <div><h2 id="reco-h">사이트 주인이 추천하는 책</h2><p class="note" id="reco-note">사이트 주인이 직접 고르고 추천 이유를 적은 책이에요.</p></div>
       <div class="reco-nav"><button type="button" class="navb" id="reco-prev" aria-label="이전 책">‹</button><button type="button" class="navb" id="reco-next" aria-label="다음 책">›</button></div>
     </div>
     <div class="reco-track" id="reco-track" tabindex="0" aria-label="추천 도서 목록, 좌우로 밀어서 넘기기"></div>
@@ -1819,7 +1819,7 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
     const pickKeys = new Set(OWNER_PICKS.map((p) => normTitle(p.title)));
     const extra = state.books.filter((b) => isReco(b) && !pickKeys.has(normTitle(b.title))).sort((a, b) => (b.rating || 0) - (a.rating || 0) || (b.finishedAt || "").localeCompare(a.finishedAt || ""));
     const list = [...fixed, ...extra];
-    $("#reco-note").textContent = extra.length ? "책숲 주인이 고른 추천 도서 " + fixed.length + "권과, 내가 추천한 책 " + extra.length + "권이에요." : "책숲 주인이 직접 고르고 추천 이유를 적은 책이에요.";
+    $("#reco-note").textContent = extra.length ? "사이트 주인이 고른 추천 도서 " + fixed.length + "권과, 내가 추천한 책 " + extra.length + "권이에요." : "사이트 주인이 직접 고르고 추천 이유를 적은 책이에요.";
     const keep = track.scrollLeft;
     if (!list.length) { track.replaceChildren(h("p", { class: "empty", style: "flex: 1 0 100%" }, state.mode === "loading" ? "불러오는 중이에요." : "아직 추천한 책이 없어요. 책에 별점 4점 이상을 주거나 내 책장에서 ‘추천’을 눌러 보세요.")); updateDots(); return; }
     track.replaceChildren(...list.map((b, i) => {
@@ -1829,7 +1829,7 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
       const q = (b.quotes || [])[0], agg = aggFor(b.title);
       return h("article", { class: "slide", role: "group", "aria-roledescription": "slide", "aria-label": (i + 1) + " / " + list.length + ": " + b.title }, cover,
         h("div", { class: "slide-body" },
-          h("div", { class: "meta" }, b.fixed ? h("span", { class: "gtag", style: "background: var(--pop); color: var(--pop-ink); border-color: var(--pop)" }, "주인 추천") : h("span", { class: "gtag" }, "내 추천"), b.genre ? h("span", { class: "gtag" }, b.genre) : null, b.rating ? h("span", { class: "st" }, stars(b.rating)) : null, agg ? aggBadge(b.title) : null),
+          h("div", { class: "meta" }, b.fixed ? h("span", { class: "gtag", style: "background: var(--pop); color: var(--pop-ink); border-color: var(--pop)" }, "사이트 주인 추천") : h("span", { class: "gtag" }, "내 추천"), b.genre ? h("span", { class: "gtag" }, b.genre) : null, b.rating ? h("span", { class: "st" }, stars(b.rating)) : null, agg ? aggBadge(b.title) : null),
           h("h3", null, b.title), b.author ? h("span", { class: "sub" }, b.author) : null,
           b.why ? h("div", { class: "why-box" }, h("span", { class: "lbl" }, "추천하는 이유"), h("p", null, b.why)) : (b.review ? h("p", { class: "why", style: "margin:0" }, "“" + b.review + "”") : null),
           q ? h("blockquote", null, "좋았던 구절 · " + q.text) : null,
