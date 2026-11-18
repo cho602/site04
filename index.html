@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E0E10">
 <meta name="description" content="책을 읽을 때마다 나무와 동물을 심어 가꾸는 나만의 독서 숲">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>나만의 책숲</title>
@@ -13,25 +14,25 @@
 <style>
 /* Layout: bento grid — a full-width living forest tile with a background strip, stat tiles, a "new books" shelf, then record form beside my bookshelf. */
 :root {
-  --bg: #F5F5F2; --card: #FFFFFF; --card2: #F1F1EE; --ink: #16161A; --muted: #6C6C72; --line: #E5E5E0;
-  --accent: #16161A; --accent-ink: #FFFFFF; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #C2412D; --glass: rgba(255,255,255,0.78);
-  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948; --s-other: #a3a39c;
+  --bg: #0E0E10; --card: #18181B; --card2: #212125; --ink: #F2F2EF; --muted: #A0A0A7; --line: #2C2C31;
+  --accent: #F2F2EF; --accent-ink: #141416; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #F08A72; --glass: rgba(24,24,27,0.8);
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767; --s-other: #6b6b66;
   --f-display: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --f-num: "Bricolage Grotesque", "Noto Sans KR", system-ui, sans-serif;
   --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
-  --night: 0;
+  --night: 0; color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #111113; --card: #1A1A1D; --card2: #222226; --ink: #F2F2EF; --muted: #9C9CA3; --line: #2D2D32;
-  --accent: #F2F2EF; --accent-ink: #141416; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #F08A72; --glass: rgba(26,26,29,0.78);
+  --bg: #0E0E10; --card: #18181B; --card2: #212125; --ink: #F2F2EF; --muted: #A0A0A7; --line: #2C2C31;
+  --accent: #F2F2EF; --accent-ink: #141416; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #F08A72; --glass: rgba(24,24,27,0.8);
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767; --s-other: #6b6b66;
-  --night: 1; color-scheme: dark;
+  --night: 0; color-scheme: dark;
 } }
 :root[data-theme="dark"] {
-  --bg: #111113; --card: #1A1A1D; --card2: #222226; --ink: #F2F2EF; --muted: #9C9CA3; --line: #2D2D32;
-  --accent: #F2F2EF; --accent-ink: #141416; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #F08A72; --glass: rgba(26,26,29,0.78);
+  --bg: #0E0E10; --card: #18181B; --card2: #212125; --ink: #F2F2EF; --muted: #A0A0A7; --line: #2C2C31;
+  --accent: #F2F2EF; --accent-ink: #141416; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #F08A72; --glass: rgba(24,24,27,0.8);
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767; --s-other: #6b6b66;
-  --night: 1; color-scheme: dark;
+  --night: 0; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.6; }
@@ -146,8 +147,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .gacha { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 25; display: grid; justify-items: center; gap: 2px; }
 .g-machine { position: relative; width: 92px; border: 0; padding: 0; background: none; cursor: pointer; filter: drop-shadow(0 8px 14px rgba(0,0,0,0.18)); }
 .g-machine svg { display: block; width: 100%; height: auto; overflow: visible; }
-.g-body { fill: var(--accent); } .g-shine { fill: rgba(255,255,255,0.14); } .g-chute { fill: #2a2a2e; } .g-rim { fill: var(--accent); }
-.g-dome { fill: color-mix(in srgb, var(--card) 55%, transparent); stroke: var(--line); stroke-width: 2; }
+.g-body { fill: #1F1F23; stroke: #3A3A40; stroke-width: 1.5; } .g-shine { fill: rgba(255,255,255,0.08); } .g-chute { fill: #050506; } .g-rim { fill: #2A2A2F; }
+.g-dome { fill: rgba(255,255,255,0.08); stroke: #44444B; stroke-width: 2; }
 .g-glint { fill: rgba(255,255,255,0.55); }
 .g-knobc { fill: var(--pop); stroke: rgba(0,0,0,0.15); stroke-width: 1; } .g-knobbar { fill: #FFFFFF; opacity: 0.9; }
 .g-knob { transform-origin: 48px 102px; transform-box: view-box; }
@@ -303,7 +304,7 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
 .modal { position: fixed; inset: 0; background: rgba(8, 14, 10, 0.5); display: grid; place-items: center; z-index: 30;
   padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .modal .panel { width: min(560px, 100%); max-height: 100%; overflow: auto; }
-.toast { box-shadow: 0 8px 24px rgba(0,0,0,0.18); position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+.toast { box-shadow: 0 8px 24px rgba(0,0,0,0.5); position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px));
   background: var(--ink); color: var(--bg); padding: 11px 20px; border-radius: 999px; font-weight: 600; z-index: 40; max-width: calc(100% - 32px); text-align: center; }
 
 @media (max-width: 900px) {
