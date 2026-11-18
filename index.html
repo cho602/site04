@@ -1,0 +1,1902 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="책을 읽을 때마다 나무와 동물을 심어 가꾸는 나만의 독서 숲">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>나만의 책숲</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Noto+Sans+KR:wght@500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: bento grid — a full-width living forest tile with a background strip, stat tiles, a "new books" shelf, then record form beside my bookshelf. */
+:root {
+  --bg: #F5F5F2; --card: #FFFFFF; --card2: #F1F1EE; --ink: #16161A; --muted: #6C6C72; --line: #E5E5E0;
+  --accent: #16161A; --accent-ink: #FFFFFF; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #C2412D; --glass: rgba(255,255,255,0.78);
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948; --s-other: #a3a39c;
+  --f-display: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-num: "Bricolage Grotesque", "Noto Sans KR", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  --night: 0;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111113; --card: #1A1A1D; --card2: #222226; --ink: #F2F2EF; --muted: #9C9CA3; --line: #2D2D32;
+  --accent: #F2F2EF; --accent-ink: #141416; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #F08A72; --glass: rgba(26,26,29,0.78);
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767; --s-other: #6b6b66;
+  --night: 1; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #111113; --card: #1A1A1D; --card2: #222226; --ink: #F2F2EF; --muted: #9C9CA3; --line: #2D2D32;
+  --accent: #F2F2EF; --accent-ink: #141416; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #F08A72; --glass: rgba(26,26,29,0.78);
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767; --s-other: #6b6b66;
+  --night: 1; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.6; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 18px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 14px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 700; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+h2 { font-size: 22px; line-height: 1.2; }
+h3 { font-size: 18px; line-height: 1.3; }
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+a { color: inherit; }
+
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-block: 4px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.mark { width: 40px; height: 40px; border-radius: 12px; background: var(--accent); display: grid; place-items: center; }
+.mark svg { width: 24px; height: 24px; }
+.brand h1 { font-size: 24px; line-height: 1.1; font-weight: 800; letter-spacing: -0.03em; }
+.brand p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 9px 18px; border: 1px solid var(--line); background: var(--card); cursor: pointer; text-decoration: none; font-weight: 600; font-size: 14px; }
+.pill.solid { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.pill.popc { background: var(--pop); color: var(--pop-ink); border-color: var(--pop); }
+.pill:hover { filter: brightness(1.05); }
+.bgm { display: flex; align-items: center; gap: 10px; }
+.bgm { position: relative; }
+.bgm-panel { position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; width: min(360px, calc(100vw - 32px)); background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px; display: grid; gap: 8px; box-shadow: 0 16px 40px rgba(0,0,0,0.16); }
+.bp-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.bgm-panel input[type="range"] { width: 120px; accent-color: var(--accent); }
+.eq { display: inline-flex; align-items: end; gap: 2px; height: 12px; }
+.eq i { display: block; width: 3px; height: 4px; border-radius: 2px; background: currentColor; }
+#bgm-btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+#bgm-btn[aria-pressed="true"] .eq i { animation: eq 1.1s ease-in-out infinite; }
+#bgm-btn[aria-pressed="true"] .eq i:nth-child(2) { animation-delay: .25s; } #bgm-btn[aria-pressed="true"] .eq i:nth-child(3) { animation-delay: .5s; }
+@keyframes eq { 0%, 100% { height: 4px; } 50% { height: 12px; } }
+@media (prefers-reduced-motion: reduce) { #bgm-btn[aria-pressed="true"] .eq i { animation: none; height: 9px; } }
+
+.menu { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 12; display: flex; gap: 4px; padding: 5px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; overflow-x: auto; scrollbar-width: none; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+.menu button { flex: 1 0 auto; border: 0; background: transparent; padding: 10px 16px; border-radius: 999px; cursor: pointer; font-family: var(--f-body); font-weight: 600; font-size: 14.5px; color: var(--muted); white-space: nowrap; }
+.menu button:hover { color: var(--ink); }
+.menu button[aria-current="page"] { background: var(--accent); color: var(--accent-ink); }
+.menu .count { display: inline-block; min-width: 1.6em; padding: 0 6px; margin-left: 2px; border-radius: 999px; background: var(--pop); color: var(--pop-ink); font-family: var(--f-num); font-size: 12px; line-height: 1.6; vertical-align: 2px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.view { display: grid; gap: 14px; min-width: 0; }
+.view.narrow { max-width: 680px; width: 100%; margin: 0 auto; }
+.bento.two { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+.g-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.g-head b { font-family: var(--f-display); font-weight: 800; font-size: 26px; letter-spacing: -0.03em; }
+.stack { display: flex; gap: 2px; height: 20px; margin: 6px 0 4px; }
+.stack i { display: block; height: 100%; min-width: 6px; }
+.stack i:first-child { border-radius: 6px 0 0 6px; } .stack i:last-child { border-radius: 0 6px 6px 0; } .stack i:only-child { border-radius: 6px; }
+.stack i.none { background: transparent !important; border: 1.5px dashed var(--muted); }
+.legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px 14px; margin: 4px 0 0; padding: 0; list-style: none; font-size: 13px; }
+.legend li { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.legend .dot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.legend .dot.none { border: 1.5px dashed var(--muted); }
+.legend em { font-style: normal; color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.legend li.top span { font-weight: 700; }
+.reco-head { display: flex; justify-content: space-between; align-items: end; gap: 10px; flex-wrap: wrap; }
+.reco-head p { margin: 2px 0 0; }
+.reco-nav { display: flex; gap: 8px; }
+.navb { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); cursor: pointer; font-size: 22px; line-height: 1; display: grid; place-items: center; padding-bottom: 3px; }
+.navb:hover:not(:disabled) { border-color: var(--accent); }
+.navb:disabled { opacity: 0.35; cursor: default; }
+.reco-track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; cursor: grab; }
+.reco-track.drag { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; user-select: none; }
+.reco-track::-webkit-scrollbar { display: none; }
+.slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; background: var(--card2); border-radius: 18px; padding: 16px; }
+@media (min-width: 820px) { .slide { flex-basis: calc(50% - 7px); } }
+@media (max-width: 380px) { .slide { grid-template-columns: 88px minmax(0, 1fr); gap: 12px; } }
+.cover { aspect-ratio: 3 / 4; max-width: 100%; border-radius: 6px 12px 12px 6px; padding: 10px 10px 10px 14px; color: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 6px 16px rgba(0,0,0,0.16); }
+.cover::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: rgba(0,0,0,0.22); }
+.cover b { font-family: var(--f-display); font-weight: 800; font-size: 14px; line-height: 1.25; letter-spacing: -0.02em; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.cover small { font-size: 10.5px; opacity: 0.85; }
+.cover canvas { position: absolute; right: 4px; bottom: 4px; width: 38px; height: 38px; opacity: 0.95; }
+.slide-body { display: grid; gap: 6px; align-content: start; min-width: 0; }
+.slide-body h3 { overflow-wrap: anywhere; }
+.slide-body blockquote { margin: 0; font-size: 14px; color: var(--ink); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.why-box { background: var(--card); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; }
+.why-box p { margin: 0; font-size: 14px; line-height: 1.65; overflow-wrap: anywhere; }
+.slide-body .why { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.dots { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+.dots button { width: 8px; height: 8px; border-radius: 999px; border: 0; padding: 0; background: var(--line); cursor: pointer; transition: width .25s ease, background .25s ease; }
+.dots button[aria-current="true"] { width: 22px; background: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .reco-track { scroll-behavior: auto; } .dots button { transition: none; } }
+.ps-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 820px) { .ps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ps { background: var(--card2); border-radius: 16px; padding: 14px 16px; display: grid; gap: 4px; min-width: 0; }
+.ps b { font-family: var(--f-num); font-weight: 700; font-size: clamp(22px, 3.2vw, 32px); line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.ps b small { font-family: var(--f-display); font-size: 14px; font-weight: 500; margin-left: 3px; letter-spacing: 0; }
+.ps-bars { display: grid; gap: 8px; margin: 8px 0 6px; }
+.psb { display: grid; grid-template-columns: 64px minmax(0, 1fr) 118px; gap: 10px; align-items: center; font-size: 13.5px; }
+.psb .track { height: 14px; }
+.psb .track i { display: block; height: 100%; background: var(--accent); border-radius: 0 4px 4px 0; transition: width 2s cubic-bezier(.2,.7,.2,1); }
+.psb b { text-align: right; font-family: var(--f-num); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.psb b small { color: var(--muted); font-weight: 500; font-family: var(--f-body); font-size: 12px; margin-left: 4px; }
+@media (max-width: 420px) { .psb { grid-template-columns: 56px minmax(0, 1fr) 96px; } }
+@media (prefers-reduced-motion: reduce) { .psb .track i { transition: none; } }
+.goal { display: grid; gap: 4px; }
+.goal-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
+.goal input { width: 84px; }
+.confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 60; }
+.plist { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+.pl { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; align-items: center; background: var(--card2); border-radius: 16px; padding: 12px; text-decoration: none; color: var(--ink); border: 1px solid transparent; }
+.pl:hover { border-color: var(--line); background: var(--card); }
+.pl .play { width: 44px; height: 44px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-size: 15px; }
+.pl b { display: block; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.pl span { font-size: 12px; color: var(--muted); }
+.gpick { display: flex; flex-wrap: wrap; gap: 6px; background: var(--card); border-radius: 14px; padding: 10px; }
+@media (max-width: 700px) { .bento.two { grid-template-columns: minmax(0, 1fr); } .menu button { font-size: 13.5px; padding: 9px 12px; } }
+.motto { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 2px 4px; }
+.motto p { margin: 0; }
+.motto-k { font-family: var(--f-display); font-weight: 700; font-size: 15px; letter-spacing: -0.01em; color: var(--ink); }
+.motto-k::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--pop); margin-right: 8px; vertical-align: 2px; }
+.motto-s { font-size: 13px; color: var(--muted); }
+.caret { display: inline-block; width: 2px; height: 1.05em; background: currentColor; margin-left: 3px; vertical-align: -0.16em; animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+.bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.tile { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 18px 20px; min-width: 0; display: grid; gap: 6px; align-content: start; }
+.span2 { grid-column: span 2; }
+.lbl { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; font-weight: 600; }
+.big { font-family: var(--f-num); font-weight: 700; font-size: 40px; line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.big small { font-family: var(--f-display); font-size: 16px; font-weight: 500; margin-left: 3px; letter-spacing: 0; }
+.big.word { font-family: var(--f-display); font-weight: 800; font-size: 26px; letter-spacing: -0.03em; }
+.sub { font-size: 13px; color: var(--muted); }
+.bar { height: 10px; border-radius: 999px; background: var(--card2); border: 1px solid var(--line); overflow: hidden; margin-top: 4px; }
+.bar i { display: block; height: 100%; background: var(--pop); border-radius: 999px; transition: width .6s ease; }
+.unlock { display: flex; gap: 12px; align-items: center; }
+.unlock canvas { width: 56px; height: 56px; flex: none; background: var(--card2); border-radius: 16px; }
+
+.forest { grid-column: 1 / -1; padding: 0; position: relative; overflow: hidden; display: block; }
+.stage { position: relative; }
+.stage canvas { display: block; width: 100%; height: clamp(320px, 46vw, 480px); touch-action: pan-y; cursor: pointer; }
+.forest.editing .stage canvas { touch-action: none; cursor: grab; }
+.forest.dragging .stage canvas { cursor: grabbing; }
+.f-top { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; pointer-events: none; }
+.f-top > * { pointer-events: auto; }
+.glass { background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; }
+.f-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.f-actions .pill { padding: 7px 14px; font-size: 13px; }
+.f-empty { position: absolute; left: 50%; top: 58%; transform: translate(-50%, -50%); text-align: center; width: max-content; max-width: calc(100% - 32px); }
+.f-empty .glass { border-radius: 18px; padding: 12px 18px; display: inline-block; font-weight: 500; }
+.info { position: absolute; left: 12px; bottom: 12px; max-width: min(380px, calc(100% - 24px)); border-radius: 18px; padding: 12px 40px 12px 14px; display: grid; gap: 4px; }
+.info .x { position: absolute; right: 6px; top: 6px; border: 0; background: transparent; cursor: pointer; font-size: 18px; width: 30px; height: 30px; border-radius: 50%; color: var(--muted); }
+.info q { font-size: 14px; font-weight: 500; quotes: "“" "”"; overflow-wrap: anywhere; }
+.info .sub { font-weight: 500; }
+.bgstrip { display: flex; gap: 8px; align-items: center; padding: 12px 14px; border-top: 1px solid var(--line); overflow-x: auto; }
+.bgstrip .lbl { flex: none; margin-right: 4px; }
+.sw { flex: none; display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid var(--line); background: var(--card2); border-radius: 999px; padding: 4px 12px 4px 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
+.sw i { width: 26px; height: 26px; border-radius: 50%; display: block; border: 1px solid var(--line); }
+.sw[aria-pressed="true"] { border-color: var(--accent); background: var(--card); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+
+.genre-bars { display: grid; gap: 7px; margin-top: 4px; }
+.gb { display: grid; grid-template-columns: 64px minmax(0, 1fr) 34px; gap: 10px; align-items: center; font-size: 13px; }
+.gb .track { height: 12px; }
+.gb .track i { display: block; height: 100%; background: var(--accent); border-radius: 0 4px 4px 0; min-width: 4px; }
+.gb b { text-align: right; font-family: var(--f-num); font-variant-numeric: tabular-nums; font-weight: 500; }
+.quote-tile blockquote { margin: 0; font-size: 18px; line-height: 1.65; overflow-wrap: anywhere; }
+.quote-tile cite { font-style: normal; font-size: 13px; color: var(--muted); }
+.quote-tile .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: var(--card2); border-radius: 999px; padding: 5px 12px; cursor: pointer; font-size: 13px; font-weight: 600; }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.chip small { font-weight: 500; opacity: 0.75; margin-left: 3px; }
+.gtag { display: inline-block; border-radius: 999px; padding: 1px 9px; font-size: 12px; font-weight: 600; background: var(--card); border: 1px solid var(--line); }
+.news-head { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: end; justify-content: space-between; }
+.news-head p { margin: 0; }
+.news { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.nb { background: var(--card2); border-radius: 18px; padding: 14px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.nb h3 { overflow-wrap: anywhere; }
+.nb p { margin: 0; font-size: 13.5px; }
+.nb .src { font-size: 12px; color: var(--muted); }
+.nb .acts { margin-top: 4px; }
+
+.desk { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 14px; align-items: start; }
+.field { display: grid; gap: 5px; }
+.field > label, .field > .lbl { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; font-weight: 600; }
+input[type="text"], input[type="date"], input[type="search"], input[type="number"], textarea {
+  width: 100%; border: 1px solid var(--line); background: var(--card2); border-radius: 14px; padding: 9px 12px; }
+textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
+.row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.stars { display: flex; gap: 2px; }
+.stars button { border: 0; background: none; font-size: 22px; line-height: 1; padding: 2px; cursor: pointer; color: var(--line); }
+.stars button.on { color: var(--pop); }
+.qrows { display: grid; gap: 8px; }
+.qrow { display: grid; grid-template-columns: minmax(0, 1fr) 70px; gap: 8px; align-items: start; }
+.picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; }
+.pick { border: 1.5px solid var(--line); background: var(--card2); border-radius: 16px; padding: 6px 4px 8px; display: grid; justify-items: center; gap: 2px; cursor: pointer; font-size: 12px; font-weight: 600; }
+.pick canvas { width: 54px; height: 54px; }
+.pick[aria-pressed="true"] { border-color: var(--accent); background: var(--card); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+.pick:disabled { cursor: not-allowed; opacity: 0.5; }
+.pick .lock { font-size: 11px; font-weight: 500; color: var(--muted); }
+.btn { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 7px 14px; cursor: pointer; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); padding: 11px 18px; font-size: 15px; justify-content: center; }
+.btn.primary:disabled { opacity: 0.5; cursor: wait; }
+.btn.ghost { border-color: transparent; background: transparent; color: var(--muted); }
+.btn.ghost:hover { color: var(--ink); }
+.btn.danger { color: var(--danger); }
+.btn.danger.solid { background: var(--danger); color: var(--card); border-color: var(--danger); }
+.btn.popb { background: var(--pop); color: var(--pop-ink); border-color: var(--pop); }
+
+.shelf-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.shelf-head input { max-width: 240px; }
+.books { display: grid; gap: 10px; }
+.book { background: var(--card2); border-radius: 18px; padding: 14px; display: grid; gap: 8px; min-width: 0; }
+.bhead { display: flex; gap: 12px; align-items: center; min-width: 0; }
+.bhead canvas { width: 46px; height: 46px; flex: none; background: var(--card); border-radius: 14px; }
+.bhead .seed { width: 46px; height: 46px; flex: none; border-radius: 14px; border: 1.5px dashed var(--line); display: grid; place-items: center; color: var(--muted); font-size: 11px; }
+.bhead > div { min-width: 0; }
+.meta { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: center; }
+.meta .st { color: var(--pop); letter-spacing: 1px; }
+.quotes { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.quotes li { background: var(--card); border-radius: 12px; padding: 8px 12px; display: flex; gap: 8px; align-items: start; justify-content: space-between; }
+.quotes p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; min-width: 0; }
+.quotes small { color: var(--muted); white-space: nowrap; }
+.acts { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.addq { display: grid; gap: 8px; background: var(--card); border-radius: 14px; padding: 10px; }
+.empty { color: var(--muted); padding: 18px 4px; text-align: center; margin: 0; }
+.note { font-size: 12px; color: var(--muted); margin: 0; }
+.status { font-size: 13px; color: var(--danger); margin: 0; }
+
+.check { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; font-size: 14px; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.rbadge { display: inline-flex; align-items: center; border-radius: 999px; padding: 1px 9px; font-size: 12px; font-weight: 600; background: var(--pop); color: var(--pop-ink); width: max-content; }
+.rbadge small { font-weight: 500; }
+.r-head { display: flex; justify-content: space-between; align-items: start; gap: 10px; }
+.r-sum { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; background: var(--card2); border-radius: 18px; padding: 14px; }
+.r-list { display: grid; gap: 8px; max-height: 40vh; overflow: auto; }
+.rv { background: var(--card2); border-radius: 14px; padding: 10px 12px; display: grid; gap: 4px; }
+.rv p { margin: 0; overflow-wrap: anywhere; }
+.r-mine { display: grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 14px; }
+.modal { position: fixed; inset: 0; background: rgba(8, 14, 10, 0.5); display: grid; place-items: center; z-index: 30;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.modal .panel { width: min(560px, 100%); max-height: 100%; overflow: auto; }
+.toast { box-shadow: 0 8px 24px rgba(0,0,0,0.18); position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  background: var(--ink); color: var(--bg); padding: 11px 20px; border-radius: 999px; font-weight: 600; z-index: 40; max-width: calc(100% - 32px); text-align: center; }
+
+@media (max-width: 900px) {
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .span2 { grid-column: 1 / -1; }
+  .desk { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 420px) { .big { font-size: 32px; } .brand h1 { font-size: 24px; } .tile { padding: 14px 16px; } }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2 5 12h4l-3 5h5v5h2v-5h5l-3-5h4z" fill="var(--accent-ink)"/></svg></div>
+      <div><h1>나만의 책숲</h1><p>한 권 읽을 때마다, 나만의 숲에 하나씩 심어요</p></div>
+    </div>
+    <div class="bgm">
+      <button type="button" class="pill" id="bgm-btn" aria-pressed="false" aria-expanded="false" aria-controls="bgm-panel"><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="bgm-label">소리 켜기</span></button>
+      <div class="bgm-panel" id="bgm-panel" hidden>
+        <div class="bp-row"><span class="lbl">음악</span><input type="range" id="bgm-mvol" min="0" max="100" value="55" aria-label="음악 소리 크기"></div>
+        <div class="chips" id="bgm-tracks" role="group" aria-label="음악 고르기"></div>
+        <div class="bp-row"><span class="lbl">자연의 소리 · 백색소음</span><input type="range" id="bgm-avol" min="0" max="100" value="45" aria-label="자연의 소리 크기"></div>
+        <div class="chips" id="bgm-ambs" role="group" aria-label="자연의 소리 고르기"></div>
+        <div class="bp-row"><span class="note">음악과 자연의 소리를 하나씩 같이 틀 수 있어요.</span><button type="button" class="btn ghost" id="bgm-off">모두 끄기</button></div>
+        <button type="button" class="btn" id="bgm-yt">유튜브 독서 플리 보기 →</button>
+      </div>
+    </div>
+  </header>
+  <nav class="menu" id="menu" aria-label="메뉴">
+    <button type="button" data-go="home">나의 숲</button>
+    <button type="button" data-go="write">기록하기</button>
+    <button type="button" data-go="shelf">내 책장 <span class="count" id="m-count">0</span></button>
+    <button type="button" data-go="new">요즘 나온 책</button>
+    <button type="button" data-go="reviews">모두의 평가</button>
+  </nav>
+
+  <div class="view" data-view="home">
+
+  <section class="motto" aria-label="나의 다짐">
+    <p class="motto-k">꾸준함은 모든 것을 바꾼다</p>
+    <p class="motto-s" id="motto-s">한 쪽씩, 한 권씩. 오늘 읽은 만큼 숲이 자라요.</p>
+  </section>
+
+  <div class="bento">
+    <section class="tile forest" id="forest" aria-label="나만의 숲">
+      <div class="stage">
+        <canvas id="scene" role="img" aria-label="나만의 숲"></canvas>
+        <div class="f-top">
+          <span class="glass" id="f-level">불러오는 중</span>
+          <div class="f-actions">
+            <button type="button" class="pill popc" id="f-seeds" hidden></button>
+            <button type="button" class="pill solid" id="f-deco" hidden></button>
+            <button type="button" class="pill" id="f-edit" aria-pressed="false">숲 꾸미기</button>
+          </div>
+        </div>
+        <div class="f-empty" id="f-empty" hidden><span class="glass">아직 빈 터예요. 첫 책을 기록하고 나무나 동물을 심어 보세요.<br><button type="button" class="pill solid" id="f-empty-go" style="margin-top:8px">첫 책 기록하기</button></span></div>
+        <div class="info glass" id="info" hidden>
+          <span class="lbl" id="info-kind"></span>
+          <h3 id="info-title"></h3>
+          <span class="sub" id="info-meta"></span>
+          <q id="info-quote" hidden></q>
+          <div class="acts" id="info-acts"></div>
+          <button type="button" class="x" id="info-x" aria-label="닫기">×</button>
+        </div>
+      </div>
+      <div class="bgstrip" id="bgstrip" role="group" aria-label="숲 배경 고르기"><span class="lbl">배경</span></div>
+    </section>
+
+    <div class="tile"><span class="lbl">읽은 책</span><span class="big" id="s-books">0<small>권</small></span><div class="goal" id="goal-box"></div></div>
+    <div class="tile"><span class="lbl">모은 구절</span><span class="big" id="s-quotes">0<small>개</small></span><span class="sub">책 한 권, 구절 하나마다 꽃·장식을 하나씩 놓을 수 있어요</span></div>
+    <div class="tile"><span class="lbl">숲 레벨</span><span class="big word" id="s-level">빈 터</span>
+      <div class="bar" aria-hidden="true"><i id="s-bar" style="width:0%"></i></div><span class="sub" id="s-next"></span></div>
+    <div class="tile"><span class="lbl">다음에 올 친구</span>
+      <div class="unlock"><canvas id="s-unlock-c" width="112" height="112" aria-hidden="true"></canvas><div><b id="s-unlock" style="font-size:17px"></b><div class="sub" id="s-unlock-sub"></div></div></div></div>
+
+  </div>
+  <section class="panel reco" aria-roledescription="carousel" aria-labelledby="reco-h">
+    <div class="reco-head">
+      <div><h2 id="reco-h">내가 추천하는 책</h2><p class="note">별점 4점 이상 준 책과 ‘추천’을 누른 책이 모여요.</p></div>
+      <div class="reco-nav"><button type="button" class="navb" id="reco-prev" aria-label="이전 책">‹</button><button type="button" class="navb" id="reco-next" aria-label="다음 책">›</button></div>
+    </div>
+    <div class="reco-track" id="reco-track" tabindex="0" aria-label="추천 도서 목록, 좌우로 밀어서 넘기기"></div>
+    <div class="dots" id="reco-dots" role="group" aria-label="추천 도서 위치"></div>
+  </section>
+  </div>
+
+  <div class="view" data-view="reviews" hidden>
+    <section class="panel" aria-labelledby="rv-h">
+      <div class="news-head">
+        <div><h2 id="rv-h">모두의 평가</h2><p class="note">이 페이지를 함께 쓰는 사람들이 남긴 별점과 한줄평이에요. 책을 고를 때 참고해 보세요.</p></div>
+        <input type="search" id="rv-search" placeholder="책 제목, 지은이 찾기" aria-label="평가한 책 찾기" style="max-width:240px">
+      </div>
+      <div class="chips" id="rv-sort" role="group" aria-label="정렬"></div>
+      <p class="note" id="rv-note" hidden></p>
+      <div class="news" id="rv-list"></div>
+    </section>
+  </div>
+
+  <div class="view" data-view="new" hidden>
+  <section class="panel pubstats" aria-labelledby="ps-h">
+    <div class="news-head">
+      <div><h2 id="ps-h">한 해 동안 나온 책</h2><p class="note">대한출판문화협회 2025년 신간 발행 통계(2026년 5월 발표). 2026년 통계는 2027년에 나와요.</p></div>
+    </div>
+    <div class="ps-grid">
+      <div class="ps"><span class="lbl">새로 나온 책</span><b><span class="cu" data-to="64991">64,991</span><small>종</small></b><span class="sub">전년보다 1.1% 늘었어요</span></div>
+      <div class="ps"><span class="lbl">찍어낸 부수</span><b><span class="cu" data-to="73028500">73,028,500</span><small>부</small></b><span class="sub">전년보다 1.3% 늘었어요</span></div>
+      <div class="ps"><span class="lbl">평균 정가</span><b><span class="cu" data-to="19897">19,897</span><small>원</small></b><span class="sub">전년보다 1.9% 올랐어요</span></div>
+      <div class="ps"><span class="lbl">번역서</span><b><span class="cu" data-to="9663">9,663</span><small>종</small></b><span class="sub">전년보다 5.8% 줄었어요</span></div>
+    </div>
+    <div>
+      <span class="lbl">많이 나온 분야 · 전체 신간 종수에서 차지하는 비율</span>
+      <div class="ps-bars" id="ps-bars"></div>
+      <p class="note">종수는 비율로 어림한 값이에요. 학습참고서는 종수가 한 해 사이 94.9% 늘어 가장 크게 늘었어요.</p>
+    </div>
+  </section>
+  <section class="panel" id="plist" aria-labelledby="pl-h">
+    <div class="news-head"><div><h2 id="pl-h">책 읽을 때 듣기 좋은 플리</h2><p class="note">유튜브에서 새 탭으로 열려요. 들을 때는 위의 ‘소리’를 꺼 두면 겹치지 않아요.</p></div></div>
+    <div class="chips" id="pl-chips" role="group" aria-label="분위기 고르기"></div>
+    <div class="plist" id="pl-list"></div>
+  </section>
+  <section class="panel" id="news" aria-labelledby="news-h">
+    <div class="news-head">
+      <div><h2 id="news-h">요즘 나온 책</h2><p class="note">교보문고 종합 주간 베스트셀러(2026년 11월 6~12일)와 2026년 화제작을 분야별로 모았어요. 2026년 11월 18일에 정리한 목록이라 저절로 바뀌지는 않아요.</p></div>
+    </div>
+    <div class="chips" id="news-chips" role="group" aria-label="분야 고르기"></div>
+    <div class="news" id="news-list"></div>
+  </section>
+  </div>
+
+  <div class="view narrow" data-view="write" hidden>
+    <form class="panel" id="record" autocomplete="off">
+      <h2>다 읽은 책 기록하기</h2>
+      <div class="field"><label for="f-title">책 제목</label><input type="text" id="f-title" required placeholder="예: 아몬드"></div>
+      <div class="field"><label for="f-author">지은이</label><input type="text" id="f-author" placeholder="예: 손원평"></div>
+      <div class="field"><span class="lbl" id="f-genre-l">분야</span><div class="chips" id="f-genre" role="group" aria-labelledby="f-genre-l"></div></div>
+      <div class="row2">
+        <div class="field"><label for="f-date">다 읽은 날</label><input type="date" id="f-date"></div>
+        <div class="field"><span class="lbl" id="f-rating-l">별점</span><div class="stars" id="f-rating" role="group" aria-labelledby="f-rating-l"></div></div>
+      </div>
+      <div class="field"><label for="f-review">한줄평</label><textarea id="f-review" rows="2" maxlength="300" placeholder="이 책을 한마디로 말하면?" style="min-height:48px"></textarea></div>
+      <label class="check" id="f-share-row"><input type="checkbox" id="f-share" checked> 별점과 한줄평을 ‘모두의 평가’에 올리기 <span class="note">이름이 함께 보여요</span></label>
+      <div class="field">
+        <span class="lbl">좋았던 구절</span>
+        <div class="qrows" id="f-quotes"></div>
+        <div><button type="button" class="btn ghost" id="f-addq">+ 구절 하나 더</button></div>
+      </div>
+      <div class="field">
+        <span class="lbl" id="f-pick-l">이 책으로 숲에 심을 것</span>
+        <div class="chips" id="f-pick-tabs" role="group" aria-label="종류"></div>
+        <div class="picker" id="f-pick" role="group" aria-labelledby="f-pick-l"></div>
+      </div>
+      <button type="submit" class="btn primary" id="f-submit" disabled>기록하고 숲에 심기</button>
+      <p class="status" id="status" hidden></p>
+      <p class="note" id="mode-note"></p>
+    </form>
+  </div>
+
+  <div class="view" data-view="shelf" hidden>
+    <div class="bento two">
+      <section class="tile" id="genre-tile">
+        <span class="lbl">내가 읽은 분야 분포</span>
+        <div class="genre-bars" id="genre-bars"></div>
+      </section>
+      <section class="tile quote-tile" id="spot">
+        <span class="lbl">다시 읽는 구절</span>
+        <blockquote id="spot-text"></blockquote>
+        <div class="row"><cite id="spot-cite"></cite><button type="button" class="btn" id="spot-next">다른 구절</button></div>
+      </section>
+    </div>
+    <section class="panel" aria-labelledby="shelf-h">
+      <div class="shelf-head">
+        <h2 id="shelf-h">내 책장</h2>
+        <input type="search" id="search" placeholder="제목, 지은이, 구절 찾기" aria-label="책장에서 찾기">
+      </div>
+      <div class="chips" id="shelf-chips" role="group" aria-label="분야별로 보기"></div>
+      <div class="books" id="books"><p class="empty">책장을 불러오는 중이에요.</p></div>
+    </section>
+  </div>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <h2 id="m-title"></h2>
+    <p class="note" id="m-note"></p>
+    <div class="chips" id="m-tabs" role="group" aria-label="종류"></div>
+    <div class="picker" id="m-pick" role="group" aria-label="고르기"></div>
+    <div class="acts"><button type="button" class="btn primary" id="m-ok">놓기</button><button type="button" class="btn ghost" id="m-cancel">나중에</button></div>
+  </div>
+</div>
+<div class="modal" id="rmodal" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="r-title">
+    <div class="r-head"><div style="min-width:0"><span class="lbl">모두의 평가</span><h2 id="r-title"></h2><span class="sub" id="r-sub"></span></div>
+      <button type="button" class="btn ghost" id="r-close" aria-label="닫기">닫기</button></div>
+    <div id="r-summary"></div>
+    <div class="r-list" id="r-list"></div>
+    <div class="r-mine" id="r-mine"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  function h(tag, attrs, ...kids) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (k === "class") el.className = v;
+      else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+      else if (v === true) el.setAttribute(k, "");
+      else if (v !== false && v != null) el.setAttribute(k, v);
+    }
+    for (const kid of kids.flat()) { if (kid == null || kid === false) continue; el.append(kid.nodeType ? kid : document.createTextNode(String(kid))); }
+    return el;
+  }
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const todayStr = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+  const josa = (w, a, b) => { const c = w.charCodeAt(w.length - 1); return w + ((c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28) ? a : b); };
+
+  /* ---------- catalogue ---------- */
+  // kind: tree | animal | deco ; cat (deco): nature | object ; flat: drawn under everything
+  const ITEMS = {
+    round:    { name: "느티나무", kind: "tree", unlock: 0, w: 96, h: 124 },
+    pine:     { name: "전나무",   kind: "tree", unlock: 0, w: 66, h: 138 },
+    cherry:   { name: "벚나무",   kind: "tree", unlock: 0, w: 106, h: 116 },
+    maple:    { name: "단풍나무", kind: "tree", unlock: 0, w: 94, h: 118 },
+    birch:    { name: "자작나무", kind: "tree", unlock: 0, w: 62, h: 142 },
+    ginkgo:   { name: "은행나무", kind: "tree", unlock: 0, w: 76, h: 136 },
+    goldosm:  { name: "금목서",   kind: "tree", unlock: 0, w: 84, h: 98 },
+    silverosm:{ name: "은목서",   kind: "tree", unlock: 0, w: 84, h: 98 },
+    meta:     { name: "메타세쿼이아", kind: "tree", unlock: 0, w: 56, h: 176 },
+    redpine:  { name: "소나무",   kind: "tree", unlock: 0, w: 118, h: 126 },
+    willow:   { name: "버드나무", kind: "tree", unlock: 0, w: 100, h: 122 },
+    camellia: { name: "동백나무", kind: "tree", unlock: 0, w: 74, h: 92 },
+    magnolia: { name: "목련",     kind: "tree", unlock: 0, w: 94, h: 112 },
+    rabbit:   { name: "토끼",     kind: "animal", unlock: 0, w: 28, h: 42 },
+    cat:      { name: "고양이",   kind: "animal", unlock: 0, w: 36, h: 34 },
+    dog:      { name: "강아지",   kind: "animal", unlock: 0, w: 38, h: 34 },
+    squirrel: { name: "다람쥐",   kind: "animal", unlock: 1, w: 30, h: 32 },
+    bird:     { name: "파랑새",   kind: "animal", unlock: 2, w: 22, h: 20 },
+    butterfly:{ name: "나비",     kind: "animal", unlock: 0, w: 22, h: 44 },
+    hedgehog: { name: "고슴도치", kind: "animal", unlock: 4, w: 32, h: 20 },
+    duck:     { name: "아기오리", kind: "animal", unlock: 5, w: 28, h: 26 },
+    corgi:    { name: "웰시코기", kind: "animal", unlock: 5, w: 44, h: 38 },
+    frog:     { name: "개구리",   kind: "animal", unlock: 6, w: 26, h: 22 },
+    fox:      { name: "여우",     kind: "animal", unlock: 7, w: 52, h: 34 },
+    shiba:    { name: "시바견",   kind: "animal", unlock: 8, w: 40, h: 38 },
+    owl:      { name: "부엉이",   kind: "animal", unlock: 10, w: 24, h: 34 },
+    deer:     { name: "아기사슴", kind: "animal", unlock: 12, w: 44, h: 50 },
+    raccoon:  { name: "너구리",   kind: "animal", unlock: 14, w: 46, h: 32 },
+    turtle:   { name: "거북이",   kind: "animal", unlock: 16, w: 36, h: 20 },
+    bear:     { name: "곰",       kind: "animal", unlock: 18, w: 40, h: 48 },
+    panda:    { name: "판다",     kind: "animal", unlock: 22, w: 40, h: 48 },
+    butterflies:{ name: "나비 떼", kind: "deco", cat: "flower", w: 54, h: 56 },
+    rose:     { name: "장미",     kind: "deco", cat: "flower", w: 42, h: 36, still: true },
+    tulip:    { name: "튤립",     kind: "deco", cat: "flower", w: 38, h: 34, still: true },
+    cosmos:   { name: "코스모스", kind: "deco", cat: "flower", w: 42, h: 48, still: true, sway: true },
+    lavender: { name: "라벤더",   kind: "deco", cat: "flower", w: 42, h: 32, still: true, sway: true },
+    daisy:    { name: "데이지",   kind: "deco", cat: "flower", w: 36, h: 16, still: true },
+    azalea:   { name: "철쭉",     kind: "deco", cat: "flower", w: 46, h: 30, still: true },
+    lily:     { name: "백합",     kind: "deco", cat: "flower", w: 28, h: 46, still: true, sway: true },
+    mugung:   { name: "무궁화",   kind: "deco", cat: "flower", w: 42, h: 58, still: true },
+    forsythia:{ name: "개나리",   kind: "deco", cat: "flower", w: 54, h: 34, still: true },
+    flowerbed:{ name: "꽃밭",     kind: "deco", cat: "flower", w: 50, h: 16, still: true },
+    hydrangea:{ name: "수국",     kind: "deco", cat: "flower", w: 42, h: 30, still: true },
+    sunflower:{ name: "해바라기", kind: "deco", cat: "flower", w: 22, h: 52 },
+    bamboo:   { name: "대나무",   kind: "deco", cat: "nature", w: 46, h: 124, still: true, sway: true },
+    bush:     { name: "덤불",     kind: "deco", cat: "nature", w: 46, h: 28, still: true },
+    rock:     { name: "이끼 바위", kind: "deco", cat: "nature", w: 38, h: 22, still: true },
+    mushroom: { name: "버섯",     kind: "deco", cat: "nature", w: 26, h: 22, still: true },
+    log:      { name: "통나무",   kind: "deco", cat: "nature", w: 48, h: 18, still: true },
+    pond:     { name: "연못",     kind: "deco", cat: "nature", w: 92, h: 30, flat: true },
+    stones:   { name: "징검돌",   kind: "deco", cat: "nature", w: 64, h: 14, flat: true, still: true },
+    bench:    { name: "벤치",     kind: "deco", cat: "object", w: 46, h: 26, still: true },
+    fence:    { name: "울타리",   kind: "deco", cat: "object", w: 62, h: 26, still: true },
+    lantern:  { name: "가로등",   kind: "deco", cat: "object", w: 14, h: 48, glow: [0, -40, 34] },
+    campfire: { name: "모닥불",   kind: "deco", cat: "object", w: 30, h: 26, glow: [0, -8, 46] },
+    tent:     { name: "텐트",     kind: "deco", cat: "object", w: 58, h: 42, still: true },
+    cabin:    { name: "오두막",   kind: "deco", cat: "object", w: 72, h: 66, glow: [-14, -26, 30] },
+    mailbox:  { name: "우체통",   kind: "deco", cat: "object", w: 18, h: 36, still: true },
+    bookstack:{ name: "책 더미",  kind: "deco", cat: "object", w: 30, h: 26, still: true },
+    sign:     { name: "표지판",   kind: "deco", cat: "object", w: 34, h: 38, still: true },
+  };
+  const ORDER = Object.keys(ITEMS);
+  const LEVELS = [[0, "빈 터"], [1, "작은 정원"], [4, "작은 숲"], [10, "울창한 숲"], [20, "깊은 숲"], [40, "전설의 숲"]];
+  const GENRES = ["소설", "시", "에세이", "인문", "역사", "과학", "경제경영", "자기계발", "어린이", "만화", "기타"];
+  const BGS = {
+    meadow:  { name: "초록 숲",   sky: ["#BEE3F0", "#E7F4E1"], hill: "#A9CF8C", ground: ["#9CCB78", "#7DB25C"], orb: "#FFD36B" },
+    blossom: { name: "벚꽃 언덕", sky: ["#F4D3E0", "#FBF0EA"], hill: "#E8B4C7", ground: ["#A8D08A", "#8CBB6E"], orb: "#FFE29A", fx: "petals" },
+    autumn:  { name: "단풍 숲",   sky: ["#F3D2A2", "#FBEBD2"], hill: "#D6874A", ground: ["#C9B46B", "#A8934E"], orb: "#FFB84D", fx: "leaves" },
+    snow:    { name: "눈 내린 숲", sky: ["#C7DAEA", "#EEF4F8"], hill: "#DDE8F0", ground: ["#F5F9FC", "#DCE6EE"], orb: "#FFF3C4", fx: "snow" },
+    lake:    { name: "호숫가",    sky: ["#A6D6EF", "#E4F3F4"], hill: "#8DBF8A", ground: ["#9CCB78", "#7DB25C"], orb: "#FFD36B", fx: "lake" },
+    sunset:  { name: "노을",      sky: ["#EE8F6A", "#FBD3A0"], hill: "#9B5E6F", ground: ["#93AB69", "#6F8B51"], orb: "#FFF0B8" },
+    starry:  { name: "별밤",      sky: ["#0B1530", "#2C3164"], hill: "#1A2C2A", ground: ["#2A4A32", "#1C3524"], orb: "#F1EBD0", fx: "night" },
+  };
+
+  /* ---------- recent books (2026-11-18) ---------- */
+  const RECENT = [
+    { g: "소설", t: "가호", a: "무라카미 하루키", p: "문학동네", note: "스물여섯 살 그림책 작가 가호가 이상한 존재들과 얽히며 가족의 위기에 맞서는 장편이에요. 하루키가 여성을 단독 주인공으로 세운 첫 장편이에요.", src: "교보문고 종합 1위 · 3주 연속" },
+    { g: "경제경영", t: "트렌드 코리아 2027", a: "김난도 외", p: "미래의창", note: "해마다 다음 해 소비 트렌드를 내다보는 시리즈의 2027년판이에요.", src: "교보문고 종합 2위" },
+    { g: "경제경영", t: "자본주의 시스템 해킹 매뉴얼", a: "전쓰트", p: "좋은땅", note: "이번 주 처음 순위에 들어와 바로 3위에 올랐어요.", src: "교보문고 종합 3위 · 새로 진입" },
+    { g: "인문", t: "세네카, 오늘을 빼앗기고 있는 당신에게", a: "세네카", p: "", note: "로마의 스토아 철학자 세네카의 글을 오늘의 독자에게 건네는 책이에요.", src: "교보문고 종합 4위" },
+    { g: "역사", t: "독재자(들)", a: "황현필", p: "역바연", note: "지난주보다 10계단 올라 5위가 됐어요.", src: "교보문고 종합 5위 · 10계단 상승" },
+    { g: "소설", t: "싯다르타", a: "헤르만 헤세", p: "민음사", note: "깨달음을 찾아 길을 떠나는 한 사람의 여정을 그린 고전이에요.", src: "교보문고 종합 6위" },
+    { g: "소설", t: "한국사 이상현상 연구원", a: "최인서", p: "다이브", note: "궁궐, 고분, 사찰에 숨은 ‘무언가’를 탐사 지침서와 사건 보고서 형식으로 풀어낸 이야기예요. 포스타입 연재 때 55만 명이 읽었어요.", src: "교보문고 종합 7위" },
+    { g: "자기계발", t: "퍼플필", a: "진쏠미", p: "클랩북스", note: "17만 크리에이터 진쏠미의 첫 책이에요. 원하는 삶과 마음속 믿음이 어긋나는 이유를 짚어요.", src: "교보문고 종합 8위" },
+    { g: "시", t: "빨강의 자서전", a: "앤 카슨", p: "한겨레출판", note: "시의 형식으로 쓴 소설이에요.", src: "교보문고 종합 9위" },
+    { g: "소설", t: "모순", a: "양귀자", p: "쓰다", note: "오래도록 다시 읽히는 한국 장편소설이에요.", src: "교보문고 종합 10위" },
+    { g: "인문", t: "철학자 16인의 인생 수업", a: "이요철", p: "", note: "동서양 철학자 16명의 삶을 성격 유형(MBTI)으로 풀어냈어요.", src: "국립중앙도서관 2026 사서추천" },
+    { g: "인문", t: "고흐로 읽는 심리 수업", a: "김동훈", p: "", note: "고흐의 그림과 삶으로 마음을 읽는 책이에요.", src: "국립중앙도서관 2026 사서추천" },
+    { g: "과학", t: "미래를 여행하는 회의주의자를 위한 안내서", a: "스티븐 노벨라 외", p: "", note: "미래 기술에 대한 기대와 과장을 과학적으로 따져 보는 책이에요.", src: "국립중앙도서관 2026 사서추천" },
+    { g: "과학", t: "뒷마당 탐조 클럽", a: "에이미 탄", p: "", note: "집 근처에서 새를 관찰하며 얻은 이야기예요.", src: "국립중앙도서관 2026 사서추천" },
+    { g: "경제경영", t: "돈의 방정식", a: "모건 하우절", p: "서삼독", note: "돈과 사람의 행동을 다루는 모건 하우절의 책이에요.", src: "교보문고 2026 상반기 베스트셀러" },
+  ];
+
+  const state = { openWhy: null, goal: 12, editGoal: false, openGenre: null, reviewDocs: {}, reviewsReady: false, uid: null, userNS: null, rvSort: "count", rvSearch: "", rv: null, rvRating: 0, books: [], decos: [], bg: "meadow", mode: "loading", search: "", shelfGenre: "전체", newsGenre: "전체",
+    openAdd: null, confirmDel: null, editing: false, selected: null, drag: null, justAdded: null, justAddedAt: 0, spotIdx: 0,
+    formRating: 0, formGenre: "", formPick: "round", formTab: "tree", modal: null, modalPick: null, modalTab: "tree" };
+
+  /* ---------- storage ---------- */
+  const LS_KEY = "chaekmadang-v3";
+  function lsRead() {
+    try { const v = JSON.parse(localStorage.getItem(LS_KEY)); if (v) return v;
+      const old = JSON.parse(localStorage.getItem("chaekmadang-v2")) || JSON.parse(localStorage.getItem("chaekmadang-v1")); if (old) return { books: old.books || [] }; } catch (e) {}
+    return { books: [] };
+  }
+  function lsWrite(d) { try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch (e) {} }
+  const newId = (p) => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const localBackend = {
+    start() { const d = lsRead(); state.books = d.books || []; state.decos = d.decos || []; state.bg = BGS[d.bg] ? d.bg : "meadow"; state.goal = d.goal > 0 ? d.goal : 12; state.mode = "local"; renderAll(); },
+    save() { lsWrite({ books: state.books, decos: state.decos, bg: state.bg, goal: state.goal }); renderAll(); },
+    async add(book) { const id = newId("b"); state.books = [...state.books, { ...book, id }]; this.save(); return id; },
+    async update(id, patch) { state.books = state.books.map((b) => b.id === id ? { ...b, ...patch } : b); this.save(); },
+    async remove(id) { state.books = state.books.filter((b) => b.id !== id); this.save(); },
+    async addDeco(d) { const id = newId("d"); state.decos = [...state.decos, { ...d, id }]; this.save(); return id; },
+    async updateDeco(id, patch) { state.decos = state.decos.map((d) => d.id === id ? { ...d, ...patch } : d); this.save(); },
+    async removeDeco(id) { state.decos = state.decos.filter((d) => d.id !== id); this.save(); },
+    async setBg(bg) { state.bg = bg; this.save(); },
+    async setGoal(goal) { state.goal = goal; this.save(); },
+  };
+  function dbBackend(db, uid) {
+    const col = db.collection("data/users/" + uid);
+    return {
+      start() {
+        const timer = setTimeout(() => { if (state.mode === "loading") setStatus("기록 저장소에 아직 연결되지 않았어요. 인터넷 연결을 확인해 주세요."); }, 10000);
+        col.onSnapshot((snap) => {
+          if (!snap.metadata.fromCache) { clearTimeout(timer); setStatus(""); }
+          const books = [], decos = []; let bg = null, goal = null;
+          for (const d of snap.docs) { const v = d.data(); if (!v) continue;
+            if (v.kind === "book") books.push({ ...v, id: d.id }); else if (v.kind === "deco") decos.push({ ...v, id: d.id }); else if (d.id === "settings") { bg = v.bg; goal = Number(v.goal); } }
+          state.books = books; state.decos = decos; if (bg && BGS[bg]) state.bg = bg; if (goal > 0) state.goal = goal; state.mode = "db"; renderAll();
+        }, (err) => { clearTimeout(timer); setStatus("기록을 불러오지 못했어요. 페이지를 다시 열어 주세요. (" + err.code + ")"); });
+      },
+      async add(book) { const ref = col.doc(); await ref.set({ ...book, kind: "book" }); return ref.id; },
+      async update(id, patch) { await col.doc(id).update(patch); },
+      async remove(id) { await col.doc(id).delete(); },
+      async addDeco(d) { const ref = col.doc(); await ref.set({ ...d, kind: "deco" }); return ref.id; },
+      async updateDeco(id, patch) { await col.doc(id).update(patch); },
+      async removeDeco(id) { await col.doc(id).delete(); },
+      async setBg(bg) { state.bg = bg; renderAll(); await col.doc("settings").set({ kind: "settings", bg, goal: state.goal }); },
+      async setGoal(goal) { state.goal = goal; renderAll(); await col.doc("settings").set({ kind: "settings", bg: state.bg, goal }); },
+      watchReviews() {
+        db.collection("reviews").onSnapshot((snap) => {
+          const docs = {}; for (const d of snap.docs) { const v = d.data(); if (v && v.items && typeof v.items === "object") docs[d.id] = v.items; }
+          state.reviewDocs = docs; state.reviewsReady = true; renderReviewsEverywhere();
+        }, () => { state.reviewsReady = true; renderReviewsEverywhere(); });
+      },
+      async saveReview(key, entry) { const items = { ...(state.reviewDocs[uid] || {}) }; items[key] = entry; state.reviewDocs = { ...state.reviewDocs, [uid]: items }; await db.doc("reviews/" + uid).set({ items }); },
+      async deleteReview(key) { const items = { ...(state.reviewDocs[uid] || {}) }; delete items[key]; state.reviewDocs = { ...state.reviewDocs, [uid]: items }; await db.doc("reviews/" + uid).set({ items }); },
+    };
+  }
+  let backend = null;
+  function errMsg(e) {
+    const c = e && e.code;
+    if (c === "invalid_argument") return "이 계정으로는 기록을 저장할 수 없어요. 공유받은 페이지라면 소유자에게 참여 권한을 요청해 주세요.";
+    if (c === "quota_exceeded") return "저장 공간이 가득 찼어요. 오래된 기록을 지운 뒤 다시 시도해 주세요.";
+    return "저장하지 못했어요. 잠시 후 다시 시도해 주세요.";
+  }
+  async function run(fn) { try { await fn(); return true; } catch (e) { setStatus(errMsg(e)); toast(errMsg(e)); return false; } }
+  function setStatus(t) { const el = $("#status"); el.textContent = t; el.hidden = !t; }
+  let toastTimer;
+  function toast(t) { const el = $("#toast"); el.textContent = t; el.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, 3000); }
+
+  /* ---------- derived ---------- */
+  const planted = () => state.books.filter((b) => b.plant && ITEMS[b.plant.type]);
+  const unplanted = () => state.books.filter((b) => !b.plant || !ITEMS[b.plant.type]);
+  const quoteCount = () => state.books.reduce((s, b) => s + (b.quotes ? b.quotes.length : 0), 0);
+  const decoEarned = () => state.books.length + quoteCount();
+  const decoTickets = () => Math.max(0, decoEarned() - state.decos.length);
+  const isUnlocked = (type, n) => n >= (ITEMS[type].unlock || 0);
+  function levelOf(n) { let i = 0; LEVELS.forEach((l, k) => { if (n >= l[0]) i = k; }); return i; }
+
+  /* ---------- drawing helpers ---------- */
+  let NIGHT = false;
+  function readTheme() { NIGHT = getComputedStyle(document.documentElement).getPropertyValue("--night").trim() === "1"; }
+  const isNight = () => NIGHT || state.bg === "starry";
+  function hash(str) { let x = 2166136261; for (let i = 0; i < str.length; i++) { x ^= str.charCodeAt(i); x = Math.imul(x, 16777619); } return x >>> 0; }
+  function rng(seed) { let a = seed; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function shade(hex, f) { const m = /^#?([0-9a-f]{6})$/i.exec(hex); if (!m) return hex; const v = parseInt(m[1], 16); const ch = (s) => Math.max(0, Math.min(255, Math.round(((v >> s) & 255) * f))); return "rgb(" + ch(16) + "," + ch(8) + "," + ch(0) + ")"; }
+  const circ = (g, x, y, r, f) => { g.beginPath(); g.arc(x, y, Math.max(0, r), 0, Math.PI * 2); g.fillStyle = f; g.fill(); };
+  const ell = (g, x, y, rx, ry, rot, f) => { g.beginPath(); g.ellipse(x, y, Math.max(0, rx), Math.max(0, ry), rot, 0, Math.PI * 2); g.fillStyle = f; g.fill(); };
+  const poly = (g, pts, f) => { g.beginPath(); g.moveTo(pts[0], pts[1]); for (let i = 2; i < pts.length; i += 2) g.lineTo(pts[i], pts[i + 1]); g.closePath(); g.fillStyle = f; g.fill(); };
+  const rect = (g, x, y, w, hh, f) => { g.fillStyle = f; g.fillRect(x, y, w, hh); };
+  function rrect(g, x, y, w, hh, r, f) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, hh, r) : g.rect(x, y, w, hh); g.fillStyle = f; g.fill(); }
+  function soft(g, x, y, rx, ry, col, rot) {
+    g.save(); g.translate(x, y); g.rotate(rot || 0); g.scale(1, ry / rx);
+    const gr = g.createRadialGradient(-rx * 0.3, -rx * 0.38, rx * 0.08, 0, 0, rx);
+    gr.addColorStop(0, shade(col, 1.14)); gr.addColorStop(0.68, col); gr.addColorStop(1, shade(col, 0.82));
+    g.fillStyle = gr; g.beginPath(); g.arc(0, 0, rx, 0, Math.PI * 2); g.fill(); g.restore();
+  }
+  const EYE = "#201A17";
+  const eye = (g, x, y, r) => { circ(g, x, y, r, EYE); circ(g, x - r * 0.32, y - r * 0.36, r * 0.42, "#FFFFFF"); };
+  const blush = (g, x, y, r) => { g.globalAlpha = 0.5; ell(g, x, y, r, r * 0.62, 0, "#FF8FA6"); g.globalAlpha = 1; };
+  const nose = (g, x, y, r) => ell(g, x, y, r, r * 0.75, 0, EYE);
+  const smile = (g, x, y, r) => { g.strokeStyle = EYE; g.lineWidth = 0.8; g.lineCap = "round"; g.beginPath(); g.arc(x, y, r, 0.15 * Math.PI, 0.85 * Math.PI); g.stroke(); };
+  const tri = (g, a, b, c, f) => poly(g, [a[0], a[1], b[0], b[1], c[0], c[1]], f);
+  function softShadow(g, r, a) { g.save(); g.scale(1, 0.26); const gr = g.createRadialGradient(0, 0, 0, 0, 0, r); gr.addColorStop(0, "rgba(0,0,0," + (a || 0.3) + ")"); gr.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = gr; g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.fill(); g.restore(); }
+
+  /* ---------- trees (rendered once into sprites) ---------- */
+  const PAL = {
+    round:  ["#1C4426", "#2C6537", "#46894A", "#78B663", "#B7DD8C"],
+    maple:  ["#6E1F13", "#A8341C", "#DB622B", "#F2983A", "#FCD36E"],
+    cherry: ["#B0597A", "#D27E99", "#EDA5BA", "#F8CBD8", "#FFF1F5"],
+    birch:  ["#3B6628", "#578A33", "#82B547", "#B1D670", "#E0F1A6"],
+    ginkgo: ["#866410", "#BE901B", "#E3BA2F", "#F5D85C", "#FFF2A6"],
+    pine:   ["#0F2E1E", "#1A4A2D", "#27633C", "#3F8250", "#86B983"],
+    bush:   ["#1E4A2A", "#2F6A3A", "#4B8E4C", "#7AB866", "#B5DB8B"],
+    osm:    ["#132F1E", "#1F4A2C", "#2E633A", "#4A8550", "#86B57A"],
+    meta:   ["#1F4A2C", "#2F6A3B", "#4A8C4C", "#79B064", "#B6D98E"],
+    redpine:["#14301F", "#21472B", "#30603A", "#4C7F50", "#86AF7E"],
+    willow: ["#3C6A2A", "#5A8A36", "#7FB04A", "#A8CF6A", "#D6EBA0"],
+    camellia:["#0E2B1A", "#174226", "#235934", "#3A7848", "#7FAE84"],
+  };
+  function pie(R, cx, cy, rx, ry) { const a = R() * Math.PI * 2, d = Math.sqrt(R()); return [cx + Math.cos(a) * d * rx, cy + Math.sin(a) * d * ry]; }
+  function blob(g, x, y, r, base, light, dark) { const gr = g.createRadialGradient(x - r * 0.35, y - r * 0.42, r * 0.1, x, y, r); gr.addColorStop(0, light); gr.addColorStop(0.55, base); gr.addColorStop(1, dark); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+  function leafMass(g, R, cx, cy, rx, ry, P, n, sz) {
+    for (let i = 0; i < n; i++) { const [x, y] = pie(R, cx, cy + ry * 0.12, rx, ry * 0.9); blob(g, x, y, sz * (0.95 + R() * 0.5), P[1], P[2], P[0]); }
+    for (let i = 0; i < n; i++) { const [x, y] = pie(R, cx - rx * 0.08, cy - ry * 0.12, rx * 0.82, ry * 0.75); blob(g, x, y, sz * (0.75 + R() * 0.4), P[2], P[3], P[1]); }
+    for (let i = 0; i < Math.ceil(n * 0.6); i++) { const [x, y] = pie(R, cx - rx * 0.25, cy - ry * 0.32, rx * 0.5, ry * 0.45); blob(g, x, y, sz * (0.5 + R() * 0.3), P[3], P[4], P[2]); }
+    g.fillStyle = P[4]; for (let i = 0; i < n * 3; i++) { const [x, y] = pie(R, cx - rx * 0.15, cy - ry * 0.25, rx * 0.8, ry * 0.65); g.globalAlpha = 0.3 + R() * 0.45; g.beginPath(); g.ellipse(x, y, 1.4, 0.8, R() * 3, 0, Math.PI * 2); g.fill(); }
+    g.globalAlpha = 1;
+  }
+  function bough(g, x0, y0, w0, x1, y1, w1, bend, col) {
+    const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L, wm = (w0 + w1) / 2;
+    const mx = (x0 + x1) / 2 + bend, my = (y0 + y1) / 2;
+    const gr = g.createLinearGradient(Math.min(x0, x1) - w0, 0, Math.max(x0, x1) + w0, 0);
+    gr.addColorStop(0, shade(col, 1.3)); gr.addColorStop(0.45, col); gr.addColorStop(1, shade(col, 0.55));
+    g.fillStyle = gr; g.beginPath(); g.moveTo(x0 + nx * w0, y0 + ny * w0); g.quadraticCurveTo(mx + nx * wm, my + ny * wm, x1 + nx * w1, y1 + ny * w1);
+    g.lineTo(x1 - nx * w1, y1 - ny * w1); g.quadraticCurveTo(mx - nx * wm, my - ny * wm, x0 - nx * w0, y0 - ny * w0); g.closePath(); g.fill();
+  }
+  function roots(g, w, col) { poly(g, [-w * 1.9, 0, -w * 0.6, -w * 1.6, w * 0.6, -w * 1.6, w * 1.9, 0], shade(col, 0.8)); }
+  function fallen(g, R, n, spread, cols, kind) {
+    for (let i = 0; i < n; i++) { const x = (R() - 0.5) * spread * 2, y = (R() - 0.3) * 6, c = cols[Math.floor(R() * cols.length)];
+      if (kind === "fan") { g.beginPath(); g.moveTo(x, y); g.arc(x, y, 2.6, Math.PI * 1.1, Math.PI * 1.9); g.closePath(); g.fillStyle = c; g.fill(); }
+      else ell(g, x, y, 2.2, 1.1, R() * 3, c); }
+  }
+  function crown(g, R, clumps, P, n, sz) { clumps.slice().sort((a, b) => b[1] - a[1]).forEach(([x, y, rx, ry]) => leafMass(g, R, x + (R() - 0.5) * 6, y + (R() - 0.5) * 5, rx, ry, P, n, sz)); }
+  const STILL = {
+    round(g, R) { softShadow(g, 50); const tc = "#6B4A33"; roots(g, 6, tc);
+      bough(g, 0, 0, 6.5, R() * 4 - 2, -58, 3.4, 2, tc);
+      bough(g, 0, -40, 3, -26, -76, 1.3, -5, tc); bough(g, 1, -46, 3, 26, -80, 1.3, 5, tc); bough(g, 0, -54, 2.4, -2, -96, 1.1, 3, tc);
+      crown(g, R, [[-26, -78, 24, 18], [26, -82, 24, 18], [0, -102, 28, 20], [-10, -62, 22, 13], [16, -64, 20, 12]], PAL.round, 7, 9); },
+    maple(g, R) { softShadow(g, 48); const tc = "#5E3D2B"; roots(g, 6, tc); fallen(g, R, 16, 38, PAL.maple.slice(1, 5));
+      bough(g, 0, 0, 6, 0, -56, 3.2, -2, tc); bough(g, 0, -40, 2.8, -24, -72, 1.2, -4, tc); bough(g, 0, -44, 2.8, 24, -76, 1.2, 4, tc);
+      crown(g, R, [[-24, -76, 24, 17], [24, -78, 24, 17], [0, -98, 27, 19], [-6, -62, 22, 12], [14, -60, 18, 11]], PAL.maple, 7, 9); },
+    cherry(g, R) { softShadow(g, 54); const tc = "#4B3430"; roots(g, 6, tc); fallen(g, R, 22, 46, ["#F7C7D5", "#F2A9BE", "#FFFFFF"]);
+      bough(g, 0, 0, 6.5, 3, -36, 4, -3, tc); bough(g, 3, -34, 3.4, -40, -62, 1.3, -6, tc); bough(g, 3, -36, 3.4, 42, -60, 1.3, 6, tc);
+      bough(g, 3, -38, 2.8, -6, -86, 1.1, -3, tc); bough(g, 3, -38, 2.6, 20, -84, 1.1, 3, tc);
+      g.strokeStyle = "rgba(255,255,255,0.35)"; g.lineWidth = 0.6; for (let y = -6; y > -32; y -= 6) { g.beginPath(); g.moveTo(-3, y); g.lineTo(3, y + 0.5); g.stroke(); }
+      crown(g, R, [[-38, -66, 22, 13], [40, -64, 22, 13], [-14, -86, 25, 16], [18, -88, 25, 16], [0, -104, 20, 12], [2, -70, 18, 10]], PAL.cherry, 7, 8.5); },
+    birch(g, R) { softShadow(g, 34); const tc = "#E9E5DC";
+      bough(g, 4, 0, 2.6, 11, -104, 1, 3, tc); bough(g, -3, 0, 3.8, -6, -124, 1.3, -3, tc);
+      g.fillStyle = "#2E2C29"; for (let i = 0; i < 22; i++) { const s = R(), y = -4 - s * 116, x = -3 - s * 3 + (R() - 0.5) * 3; g.fillRect(x - 1.5, y, 2.5 + R() * 2.5, 1.1 + R()); }
+      for (let i = 0; i < 9; i++) { const s = R(), y = -4 - s * 96; g.fillRect(4 + s * 7 - 1, y, 2 + R() * 2, 1); }
+      ell(g, -3, -3, 4.5, 3, 0, "rgba(40,36,32,0.55)");
+      crown(g, R, [[-8, -116, 15, 15], [12, -102, 14, 13], [-14, -94, 14, 12], [8, -84, 13, 11], [-4, -132, 11, 10], [16, -120, 11, 10]], PAL.birch, 6, 6.5); },
+    ginkgo(g, R) { softShadow(g, 40); const tc = "#5E4A3A"; roots(g, 5, tc); fallen(g, R, 26, 40, ["#F5D85C", "#E3BA2F", "#FFF2A6"], "fan");
+      bough(g, 0, 0, 5.4, 0, -108, 1.4, 0, tc); bough(g, 0, -60, 2.2, -16, -80, 1, -2, tc); bough(g, 0, -66, 2.2, 16, -88, 1, 2, tc);
+      crown(g, R, [[0, -116, 18, 17], [-13, -96, 18, 15], [14, -92, 18, 15], [0, -78, 22, 14], [-8, -62, 19, 11], [11, -62, 16, 10]], PAL.ginkgo, 6, 8); },
+    pine(g, R) { softShadow(g, 38); const P = PAL.pine; bough(g, 0, 0, 4, 0, -126, 1, 0, "#5A3A28");
+      for (let i = 0; i < 8; i++) {
+        const y = -16 - i * 14.5, wd = 31 * (1 - i / 8.6) + 3, j = (R() - 0.5) * 3;
+        if (i > 0) { g.globalAlpha = 0.35; ell(g, 0, y + 3, wd * 0.95, 3.6, 0, P[0]); g.globalAlpha = 1; }
+        const gr = g.createLinearGradient(-wd, 0, wd, 0); gr.addColorStop(0, P[3]); gr.addColorStop(0.45, P[2]); gr.addColorStop(1, P[0]);
+        g.fillStyle = gr; g.beginPath(); g.moveTo(j, y - 24); g.quadraticCurveTo(wd * 0.35, y - 12, wd, y + 2);
+        const steps = 9; for (let s = 1; s <= steps; s++) { const x = wd - (2 * wd * s) / steps; g.lineTo(x + wd / steps, y + (s % 2 ? 5 : 0)); g.lineTo(x, y + 1); }
+        g.quadraticCurveTo(-wd * 0.35, y - 12, j, y - 24); g.closePath(); g.fill();
+        g.strokeStyle = P[4]; g.globalAlpha = 0.55; g.lineWidth = 0.8; for (let k = 0; k < 5; k++) { const x = -wd * (0.2 + R() * 0.6), yy = y - 6 + R() * 6; g.beginPath(); g.moveTo(x, yy); g.lineTo(x - 3, yy + 3); g.stroke(); } g.globalAlpha = 1;
+      } },
+    goldosm(g, R) { osmanthus(g, R, ["#F39A2B", "#F7B24A", "#FFC766"]); },
+    silverosm(g, R) { osmanthus(g, R, ["#FFFDF3", "#F4EDD3", "#FFFFFF"]); },
+    meta(g, R) { softShadow(g, 30); bough(g, 0, 0, 5.4, 0, -166, 0.8, 0, "#7A4A30");
+      g.strokeStyle = "rgba(40,20,10,0.35)"; g.lineWidth = 0.6; for (let x = -3; x <= 3; x += 2) { g.beginPath(); g.moveTo(x, -2); g.lineTo(x * 0.4, -60); g.stroke(); }
+      for (let i = 0; i < 12; i++) { const y = -24 - i * 12.4, rx = 25 * (1 - i / 12.6) + 3.5; leafMass(g, R, (R() - 0.5) * 3, y, rx, 8.5, PAL.meta, 4, 5.2); }
+      leafMass(g, R, 0, -170, 4, 6, PAL.meta, 2, 3.2); },
+    redpine(g, R) { softShadow(g, 54); const tc = "#A2583A";
+      bough(g, 0, 0, 6.5, 12, -52, 4, -16, tc); bough(g, 12, -52, 4, -6, -90, 2.6, 12, tc);
+      bough(g, 9, -44, 2.8, 42, -68, 1.2, -5, tc); bough(g, 5, -64, 2.5, -38, -80, 1.1, 5, tc); bough(g, -3, -84, 2.1, 20, -106, 1, -3, tc);
+      for (let i = 0; i < 8; i++) { const y = -4 - i * 6, x = (i * 1.6) - 2; ell(g, x, y, 2.4, 1.2, 0.3, "rgba(70,30,15,0.45)"); }
+      [[42, -72, 24, 8], [-38, -84, 24, 8], [20, -108, 21, 8], [-6, -96, 16, 7], [4, -122, 14, 6]].forEach(([x, y, rx, ry]) => {
+        g.globalAlpha = 0.45; ell(g, x, y + 4, rx * 0.95, ry * 0.6, 0, PAL.redpine[0]); g.globalAlpha = 1; leafMass(g, R, x, y, rx, ry, PAL.redpine, 6, 6); }); },
+    willow(g, R) { softShadow(g, 52); const tc = "#6B5A45"; roots(g, 6, tc);
+      bough(g, 0, 0, 6.5, 0, -62, 3.2, 3, tc); bough(g, 0, -56, 2.6, -24, -94, 1.1, -4, tc); bough(g, 0, -58, 2.6, 24, -96, 1.1, 4, tc); bough(g, 0, -60, 2.2, 0, -108, 1, 2, tc);
+      leafMass(g, R, 0, -92, 36, 18, PAL.willow, 6, 8);
+      for (let i = 0; i < 56; i++) { const x0 = (R() - 0.5) * 76, y0 = -100 + R() * 18, len = 46 + R() * 44, x1 = x0 * 1.18 + (R() - 0.5) * 6;
+        g.strokeStyle = PAL.willow[2 + Math.floor(R() * 3)]; g.globalAlpha = 0.75 + R() * 0.25; g.lineWidth = 1.2 + R() * 1.2;
+        g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(x0 * 1.12, y0 + len * 0.35, x1, y0 + len); g.stroke(); }
+      g.globalAlpha = 1; },
+    camellia(g, R) { softShadow(g, 40); const tc = "#5A4636"; roots(g, 5, tc); bough(g, 0, 0, 5, 0, -30, 3, 1, tc);
+      for (let i = 0; i < 5; i++) { const x = (R() - 0.5) * 50; g.save(); g.translate(x, (R() - 0.3) * 4); circ(g, 0, 0, 2.6, "#C81E33"); circ(g, 0, 0, 1, "#F6D24A"); g.restore(); }
+      crown(g, R, [[-17, -48, 21, 17], [17, -50, 21, 17], [0, -66, 23, 17], [0, -34, 23, 11]], PAL.camellia, 7, 8);
+      for (let i = 0; i < 20; i++) { const [x, y] = pie(R, 0, -52, 34, 30); for (let k = 0; k < 5; k++) { const a = k * 1.2566 + R(); circ(g, x + Math.cos(a) * 2.2, y + Math.sin(a) * 2.2, 2.2, k % 2 ? "#D7263D" : "#E8434F"); } circ(g, x, y, 1.2, "#F6D24A"); } },
+    magnolia(g, R) { softShadow(g, 46); const tc = "#7D746A"; roots(g, 5, tc); bough(g, 0, 0, 5.4, -2, -46, 3, -2, tc);
+      const tips = [[-32, -80], [-14, -98], [8, -104], [30, -86], [-38, -60], [36, -62], [0, -84]];
+      tips.forEach(([x, y]) => bough(g, -1, -42, 2.2, x, y, 0.9, x * 0.08, tc));
+      const fl = []; tips.forEach(([x, y]) => { fl.push([x, y]); for (let k = 0; k < 3; k++) { const t2 = 0.45 + R() * 0.45; fl.push([-1 + (x + 1) * t2 + (R() - 0.5) * 6, -42 + (y + 42) * t2 + (R() - 0.5) * 6]); } });
+      for (let i = 0; i < 16; i++) { const [x, y] = pie(R, 0, -78, 38, 26); fl.push([x, y]); }
+      fl.forEach(([x, y]) => { const r = (R() - 0.5) * 0.5; ell(g, x - 1.6, y, 2.4, 4.8, r - 0.25, "#F7EFEA"); ell(g, x + 1.6, y, 2.4, 4.8, r + 0.25, "#FFF8F4"); ell(g, x, y + 2.6, 2.6, 1.6, 0, "#E9A9BE"); });
+      for (let i = 0; i < 10; i++) { const [x, y] = pie(R, 0, -70, 34, 24); ell(g, x, y, 2.8, 1.3, R() * 3, "#86A866"); } },
+    rose(g, R, v) { softShadow(g, 24); const c = ["#C8203A", "#EE7A9A", "#FFF1E4"][v % 3];
+      crown(g, R, [[-11, -12, 13, 11], [11, -13, 13, 11], [0, -20, 14, 11]], PAL.camellia, 5, 5.5);
+      for (let i = 0; i < 9; i++) { const [x, y] = pie(R, 0, -18, 17, 11); ell(g, x - 1.5, y + 2.6, 2.4, 1.2, -0.5, "#2E6B3A"); rosebud(g, x, y, 3 + R() * 1.1, c); } },
+    tulip(g, R) { softShadow(g, 22, 0.2); const cols = ["#E0344A", "#F6C343", "#F28AB2", "#9B6BD6", "#FF8A3D"];
+      for (let i = 0; i < 7; i++) { const x = -15 + i * 5 + (R() - 0.5) * 2, top = -20 - R() * 10, c = cols[Math.floor(R() * cols.length)];
+        stem(g, x, 0, x + (R() - 0.5) * 3, top, 0, 1.3); soft(g, x - 2.6, -6, 2, 7, "#5E9A4C", -0.35); soft(g, x + 2.6, -7, 1.8, 6.5, "#6FAE58", 0.35);
+        g.save(); g.translate(x, top); g.beginPath(); g.moveTo(-3.4, -1); g.lineTo(-3.6, -7); g.lineTo(-1.6, -5); g.lineTo(0, -8); g.lineTo(1.6, -5); g.lineTo(3.6, -7); g.lineTo(3.4, -1); g.quadraticCurveTo(0, 3.4, -3.4, -1); g.closePath();
+        const gr = g.createLinearGradient(-4, 0, 4, 0); gr.addColorStop(0, shade(c, 1.15)); gr.addColorStop(1, shade(c, 0.78)); g.fillStyle = gr; g.fill(); g.restore(); } },
+    cosmos(g, R) { softShadow(g, 22, 0.18); const cols = ["#F28AB2", "#FFFFFF", "#D94F8C", "#F7B3CC"];
+      for (let i = 0; i < 8; i++) { const x = (R() - 0.5) * 34, top = -26 - R() * 20, bx = x + (R() - 0.5) * 8, c = cols[Math.floor(R() * cols.length)];
+        stem(g, x * 0.4, 0, bx, top, (R() - 0.5) * 8, 0.9, "#5E9A4C");
+        for (let k = 0; k < 4; k++) { const yy = -4 - k * 6; stem(g, x * 0.4 + (bx - x * 0.4) * (k / 6), yy, x * 0.4 + (bx - x * 0.4) * (k / 6) + (k % 2 ? 4 : -4), yy - 3, 0, 0.5, "#6FAE58"); }
+        bloom(g, bx, top, 3.4, c, "#F2B544", 8, 0.6); } },
+    lavender(g, R) { softShadow(g, 24, 0.2);
+      for (let i = 0; i < 16; i++) { const x = (R() - 0.5) * 26; stem(g, x * 0.3, 0, x, -8 - R() * 4, 0, 1.4, "#8FA88A"); }
+      for (let i = 0; i < 13; i++) { const x = (R() - 0.5) * 36, top = -20 - R() * 10; stem(g, x * 0.25, -2, x, top + 6, 0, 0.8, "#7E9A78");
+        for (let k = 0; k < 7; k++) { const yy = top + k * 1.7; ell(g, x + (k % 2 ? 0.9 : -0.9), yy, 1.2, 1.5, 0, k < 2 ? "#9C84D9" : (k % 2 ? "#7C5FC4" : "#6A4FB0")); } } },
+    daisy(g, R) { softShadow(g, 18, 0.16); ell(g, 0, -2, 17, 4, 0, "#5E9A4C"); ell(g, -2, -3, 14, 3, 0, "#78B35E");
+      for (let i = 0; i < 13; i++) { const [x, y] = pie(R, 0, -6, 16, 4); stem(g, x, y + 4, x, y, 0, 0.7); bloom(g, x, y, 2.1, "#FFFFFF", "#F2B544", 9, 0.55); } },
+    azalea(g, R) { softShadow(g, 26); crown(g, R, [[-13, -11, 13, 9], [13, -11, 13, 9], [0, -17, 15, 10]], PAL.bush, 4, 5);
+      for (let i = 0; i < 26; i++) { const [x, y] = pie(R, 0, -14, 20, 11); bloom(g, x, y, 2.1, i % 3 ? "#E24C9A" : "#F27DB6", "#B8226E", 5, 0.8); } },
+    lily(g, R) { softShadow(g, 14, 0.2);
+      for (let i = 0; i < 3; i++) { const x = -6 + i * 6, top = -30 - R() * 10; stem(g, x, 0, x + (R() - 0.5) * 2, top, 0, 1.4);
+        soft(g, x - 3, -10 - i * 3, 1.6, 6, "#5E9A4C", -0.6); soft(g, x + 3, -16, 1.6, 6, "#6FAE58", 0.6);
+        g.save(); g.translate(x, top); g.rotate((i - 1) * 0.35);
+        [-0.55, 0, 0.55].forEach((a) => { g.save(); g.rotate(a); g.beginPath(); g.moveTo(0, 2); g.quadraticCurveTo(-3.4, -5, 0, -10); g.quadraticCurveTo(3.4, -5, 0, 2); g.fillStyle = a ? "#FFFDF7" : "#F4EEE2"; g.fill(); g.restore(); });
+        g.strokeStyle = "#E08A2E"; g.lineWidth = 0.5; [-1, 0, 1].forEach((d) => { g.beginPath(); g.moveTo(0, 0); g.lineTo(d * 1.6, -6); g.stroke(); circ(g, d * 1.6, -6, 0.7, "#C0561E"); }); g.restore(); } },
+    mugung(g, R) { softShadow(g, 30); const tc = "#6B5A4A"; bough(g, 0, 0, 3, -1, -26, 1.6, -1, tc); bough(g, 0, 0, 2.6, 6, -22, 1.2, 2, tc);
+      crown(g, R, [[-10, -36, 15, 13], [10, -38, 15, 13], [0, -48, 15, 11]], PAL.round, 5, 6);
+      for (let i = 0; i < 11; i++) { const [x, y] = pie(R, 0, -40, 19, 16); bloom(g, x, y, 2.6, i % 2 ? "#E59BC9" : "#D88ACB", "#B21E48", 5, 0.95); circ(g, x, y, 0.6, "#FFF4C8"); } },
+    forsythia(g, R) { softShadow(g, 30, 0.2);
+      for (let i = 0; i < 9; i++) { const dir = i % 2 ? 1 : -1, ex = dir * (10 + R() * 18), ey = -8 - R() * 16, top = -22 - R() * 12;
+        g.strokeStyle = "#7A6A3A"; g.lineWidth = 1; g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(ex * 0.5, top, ex, ey); g.stroke();
+        for (let k = 1; k < 10; k++) { const t2 = k / 10, x = (1 - t2) * (1 - t2) * 0 + 2 * (1 - t2) * t2 * ex * 0.5 + t2 * t2 * ex, y = 2 * (1 - t2) * t2 * top + t2 * t2 * ey;
+          bloom(g, x + (R() - 0.5) * 2, y + (R() - 0.5) * 2, 1.5, k % 3 ? "#F7D21E" : "#FBE15A", "#E8A90E", 4, 0.9); } } },
+    bamboo(g, R) { softShadow(g, 30);
+      const culms = [[-14, 92], [-5, 120], [5, 108], [14, 84], [0, 70]];
+      culms.forEach(([x, hh], ci) => {
+        const gr = g.createLinearGradient(x - 2.4, 0, x + 2.4, 0); gr.addColorStop(0, "#9CCB5E"); gr.addColorStop(0.5, "#6FA63E"); gr.addColorStop(1, "#4A7E2A");
+        const lean = (ci - 2) * 0.9; g.fillStyle = gr; g.beginPath(); g.moveTo(x - 2.3, 0); g.lineTo(x - 1.8 + lean, -hh); g.lineTo(x + 1.8 + lean, -hh); g.lineTo(x + 2.3, 0); g.closePath(); g.fill();
+        for (let y = 13; y < hh; y += 13) { const lx = x + lean * (y / hh); rect(g, lx - 2.5, -y - 0.8, 5, 1.6, "#3F6E24"); rect(g, lx - 2.2, -y + 0.8, 4.4, 0.6, "#B6DB7E"); }
+        for (let k = 0; k < 4; k++) { const y = hh * (0.55 + k * 0.13), lx = x + lean * (y / hh);
+          for (let j = 0; j < 4; j++) { const side = j % 2 ? 1 : -1, a = side * (0.35 + R() * 0.5); g.save(); g.translate(lx, -y); g.rotate(a + (side > 0 ? 1.2 : -1.2));
+            ell(g, 0, -7, 1.6, 7.5, 0, ["#5E9A3A", "#7DB548", "#3F7A2A"][Math.floor(R() * 3)]); g.restore(); } } }); },
+    bush(g, R) { softShadow(g, 26); crown(g, R, [[-12, -12, 13, 10], [12, -12, 13, 10], [0, -18, 15, 11]], PAL.bush, 5, 6);
+      for (let i = 0; i < 6; i++) circ(g, (R() - 0.5) * 36, -8 - R() * 16, 1.6, "#E2504A"); },
+    hydrangea(g, R) { softShadow(g, 24); crown(g, R, [[-11, -9, 12, 8], [11, -9, 12, 8], [0, -13, 13, 9]], PAL.bush, 4, 5);
+      const heads = [[-12, -16, "#7E9CE8"], [0, -22, "#A889E0"], [13, -16, "#E79BC6"], [-4, -11, "#9DB7F2"], [8, -10, "#C4A5EE"]];
+      heads.forEach(([x, y, c]) => { for (let i = 0; i < 14; i++) { const [px, py] = pie(R, x, y, 6.5, 5.5); circ(g, px, py, 1.9, shade(c, 0.85 + R() * 0.3)); } circ(g, x - 2, y - 2, 1.4, "rgba(255,255,255,0.6)"); }); },
+    flowerbed(g, R) { softShadow(g, 30, 0.2); ell(g, 0, -3, 25, 6, 0, "#5E9A4C"); ell(g, -2, -4, 22, 4.5, 0, "#78B35E");
+      const cols = ["#F2C94C", "#F28AB2", "#FFFFFF", "#B79CF2", "#FF8A65", "#7EB6F2"];
+      for (let i = 0; i < 28; i++) { const [x, y] = pie(R, 0, -6, 22, 5); const c = cols[Math.floor(R() * cols.length)];
+        g.strokeStyle = "#4C8A3E"; g.lineWidth = 0.8; g.beginPath(); g.moveTo(x, y + 4); g.lineTo(x, y); g.stroke();
+        for (let p = 0; p < 5; p++) { const a = p * 1.2566; circ(g, x + Math.cos(a) * 1.7, y + Math.sin(a) * 1.7, 1.3, c); } circ(g, x, y, 0.9, "#E89B2E"); } },
+    rock(g, R) { softShadow(g, 24); soft(g, -6, -8, 13, 9, "#8E959A"); soft(g, 8, -6, 11, 7, "#A3AAAE"); soft(g, 0, -12, 9, 7, "#B4BABE");
+      for (let i = 0; i < 12; i++) { const [x, y] = pie(R, -2, -15, 10, 3.5); circ(g, x, y, 1.6 + R() * 1.6, R() < 0.5 ? "#6E9A4E" : "#8DB866"); } },
+    mushroom(g) { softShadow(g, 16, 0.22);
+      rrect(g, 4, -9, 5, 9, 2, "#F3E7D3"); g.beginPath(); g.ellipse(6.5, -9, 7.5, 6.5, 0, Math.PI, 0); g.fillStyle = "#D9473B"; g.fill(); circ(g, 4, -12, 1.2, "#FFFFFF"); circ(g, 9, -11, 1, "#FFFFFF");
+      rrect(g, -7, -13, 6, 13, 2.5, "#F6EDDD"); g.beginPath(); g.ellipse(-4, -13, 10, 9, 0, Math.PI, 0);
+      const gr = g.createLinearGradient(-14, -22, 6, -13); gr.addColorStop(0, "#F06A55"); gr.addColorStop(1, "#C23A2E"); g.fillStyle = gr; g.fill();
+      circ(g, -8, -17, 1.8, "#FFFFFF"); circ(g, -2, -20, 1.6, "#FFFFFF"); circ(g, 1, -15.5, 1.3, "#FFFFFF"); },
+    log(g) { softShadow(g, 28); const gr = g.createLinearGradient(0, -16, 0, 0); gr.addColorStop(0, "#9A6B45"); gr.addColorStop(1, "#5E3F28");
+      rrect(g, -22, -15, 40, 15, 6, gr); ell(g, 18, -7.5, 5, 7.5, 0, "#D9B98E"); g.strokeStyle = "#A9825A"; g.lineWidth = 0.7;
+      [5.5, 3.5, 1.6].forEach((r) => { g.beginPath(); g.ellipse(18, -7.5, r * 0.7, r, 0, 0, Math.PI * 2); g.stroke(); });
+      g.strokeStyle = "rgba(0,0,0,0.25)"; g.lineWidth = 0.6; for (let x = -18; x < 12; x += 6) { g.beginPath(); g.moveTo(x, -13); g.lineTo(x + 4, -3); g.stroke(); }
+      circ(g, -12, -15, 2.4, "#6E9A4E"); circ(g, -8, -15.5, 1.8, "#8DB866"); },
+    stones(g, R) { for (let i = 0; i < 4; i++) { const x = -24 + i * 16, y = -4 + (i % 2) * 3; ell(g, x, y + 1, 7.5, 3.4, 0, "rgba(0,0,0,0.18)"); soft(g, x, y, 7, 3, "#A9AEB2"); } },
+    bench(g) { softShadow(g, 28); const wd = "#A8713F", dk = "#6C4524";
+      rect(g, -19, -10, 3, 10, dk); rect(g, 16, -10, 3, 10, dk); rect(g, -18, -24, 2.5, 14, dk); rect(g, 15.5, -24, 2.5, 14, dk);
+      rrect(g, -22, -12, 44, 3.6, 1.5, wd); rrect(g, -22, -16.5, 44, 3, 1.5, shade(wd, 1.1)); rrect(g, -21, -24, 42, 3, 1.5, wd); rrect(g, -21, -20, 42, 2.5, 1.2, shade(wd, 0.9)); },
+    fence(g) { softShadow(g, 34, 0.18); const wd = "#E9DCC3", dk = "#B8A483";
+      rect(g, -30, -17, 60, 3, dk); rect(g, -30, -9, 60, 3, dk);
+      for (let x = -28; x <= 28; x += 11) { poly(g, [x - 3, 0, x - 3, -20, x, -24, x + 3, -20, x + 3, 0], wd); rect(g, x + 1.5, -20, 1.5, 20, "rgba(0,0,0,0.12)"); } },
+    tent(g) { softShadow(g, 34); const gr = g.createLinearGradient(-28, 0, 28, 0); gr.addColorStop(0, "#F7A24B"); gr.addColorStop(0.5, "#EE8A3A"); gr.addColorStop(0.5, "#D46E2A"); gr.addColorStop(1, "#B95A20");
+      poly(g, [-28, 0, 0, -36, 28, 0], gr); poly(g, [-8, 0, 0, -26, 8, 0], "#4A2C1A"); poly(g, [-8, 0, 0, -26, -2, 0], "#6B4128");
+      g.strokeStyle = "#5A3A22"; g.lineWidth = 1; g.beginPath(); g.moveTo(0, -36); g.lineTo(0, -42); g.stroke(); poly(g, [0, -42, 7, -40, 0, -38], "#F2C94C"); },
+    mailbox(g) { softShadow(g, 12); rect(g, -1.5, -20, 3, 20, "#6C4524"); rrect(g, -7, -32, 14, 13, 6, "#E0483C"); rect(g, -7, -24, 14, 5, "#C23A2E"); rect(g, 6, -34, 1.4, 9, "#3A3330"); rect(g, 7, -34, 5, 3.5, "#F2C94C"); },
+    bookstack(g) { softShadow(g, 20); const bks = [["#3E6FB0", 26, 0], ["#E0704A", 23, -1], ["#F2C14E", 25, 1], ["#5E9A6B", 21, -1], ["#B472C8", 19, 0.5]];
+      let y = 0; bks.forEach(([c, w, off], i) => { const hh = i === 4 ? 4 : 5; rrect(g, -w / 2 + off, y - hh, w, hh, 1, c); rect(g, -w / 2 + off + 1.5, y - hh + 1, w - 4, hh - 2, "rgba(255,255,255,0.75)"); rect(g, -w / 2 + off, y - hh, 2.5, hh, shade(c, 0.8)); y -= hh; });
+      poly(g, [6, y, 11, y - 6, 13, y], "#E0483C"); },
+    sign(g) { softShadow(g, 14); rect(g, -1.8, -26, 3.6, 26, "#6C4524"); rrect(g, -16, -36, 32, 14, 3, "#B98250"); rrect(g, -14.5, -34.5, 29, 11, 2, "#D2A06B");
+      g.fillStyle = "#4A2C1A"; g.font = "700 7px 'Noto Sans KR', sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("책숲", 0, -28.5); },
+  };
+  function osmanthus(g, R, flow) { softShadow(g, 44); const tc = "#5E4532";
+    bough(g, -4, 0, 3.4, -8, -32, 1.8, -2, tc); bough(g, 4, 0, 3.4, 8, -34, 1.8, 2, tc); bough(g, 0, 0, 4, 0, -38, 2, 0, tc);
+    crown(g, R, [[-21, -52, 23, 19], [21, -54, 23, 19], [0, -72, 26, 20], [-6, -38, 23, 12], [13, -40, 19, 11]], PAL.osm, 7, 8);
+    for (let i = 0; i < 46; i++) { const [x, y] = pie(R, 0, -56, 38, 32); for (let k = 0; k < 4; k++) circ(g, x + (R() - 0.5) * 3.4, y + (R() - 0.5) * 3, 0.9 + R() * 0.5, flow[(i + k) % flow.length]); }
+    fallen(g, R, 18, 34, flow); }
+  function bloom(g, x, y, r, petal, center, n, pr) { n = n || 5; for (let k = 0; k < n; k++) { const a = k * Math.PI * 2 / n; ell(g, x + Math.cos(a) * r, y + Math.sin(a) * r, r * (pr || 0.85), r * (pr || 0.85) * 0.7, a, petal); } circ(g, x, y, r * 0.55, center); }
+  function stem(g, x0, y0, x1, y1, bend, w, col) { g.strokeStyle = col || "#4C8A3E"; g.lineWidth = w || 1; g.lineCap = "round"; g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo((x0 + x1) / 2 + bend, (y0 + y1) / 2, x1, y1); g.stroke(); }
+  function rosebud(g, x, y, r, c) { soft(g, x, y, r, r * 0.92, c); g.strokeStyle = shade(c, 0.62); g.lineWidth = 0.6;
+    g.beginPath(); g.arc(x, y, r * 0.62, 0.2, 2.6); g.stroke(); g.beginPath(); g.arc(x + r * 0.1, y - r * 0.05, r * 0.35, 3.3, 5.9); g.stroke(); g.beginPath(); g.arc(x - r * 0.05, y + r * 0.1, r * 0.82, 3.6, 5.0); g.stroke(); }
+  const SPR = 3, sprites = new Map();
+  function sprite(type, variant) {
+    const key = type + ":" + variant; let s = sprites.get(key); if (s) return s;
+    const it = ITEMS[type], pad = 16, w = it.w + pad * 2, hh = it.h + pad + 8;
+    const cv = document.createElement("canvas"); cv.width = Math.ceil(w * SPR); cv.height = Math.ceil(hh * SPR);
+    const g = cv.getContext("2d"); g.scale(SPR, SPR); g.translate(w / 2, it.h + pad);
+    STILL[type](g, rng(hash(type + "#" + variant)), variant);
+    s = { cv, ox: w / 2, oy: it.h + pad }; sprites.set(key, s); return s;
+  }
+
+  /* ---------- animals & animated decorations ---------- */
+  const hop = (t, ph, sp) => reduce ? 0 : Math.pow(Math.max(0, Math.sin(t * sp + ph)), 6) * 6;
+  const walkA = (t, ph) => reduce ? 0 : Math.sin(t * 7 + ph) * 1.6;
+  const wagA = (t, ph, sp) => reduce ? 0 : Math.sin(t * (sp || 12) + ph);
+  const pick = (arr, ph) => arr[Math.floor(ph * 97) % arr.length];
+  const DOGS = [{ c: "#FFFFFF", e: "#EED9C0", m: "#FFFFFF" }, { c: "#C98B55", e: "#9C6436", m: "#EBCFAE" }, { c: "#F0DCC0", e: "#D4AD80", m: "#FFF6EA" }, { c: "#4A403B", e: "#2E2724", m: "#8C7B70" }];
+  const CATS = [{ c: "#F2A65A", s: "#D9803A" }, { c: "#A3ABB4", s: "#737C86" }, { c: "#2F2B2B", s: "#1B1818", y: 1 }, { c: "#FFFFFF", s: "#F0B070" }];
+  const ANIM = {
+    dog(g, t, ph) { const v = pick(DOGS, ph), w = walkA(t, ph), wag = wagA(t, ph, 14);
+      g.save(); g.translate(-11, -13); g.rotate(-0.7 + wag * 0.25); soft(g, -3, -3, 4.5, 3, v.c, 0.5); g.restore();
+      soft(g, -7 - w, -2.6, 3, 3, v.c); soft(g, 3 + w, -2.6, 3, 3, v.c);
+      soft(g, -2, -9, 11, 8, v.c);
+      soft(g, -4 + w, -2.4, 3, 3, v.c); soft(g, 6 - w, -2.4, 3, 3, v.c);
+      soft(g, 8, -21, 11, 10.5, v.c);
+      soft(g, 14, -16.5, 5.6, 4.2, v.m); nose(g, 18.8, -18.2, 1.9);
+      g.strokeStyle = EYE; g.lineWidth = 0.8; g.beginPath(); g.moveTo(18.8, -17); g.quadraticCurveTo(18, -14.5, 16.4, -14.8); g.stroke();
+      if (Math.sin(t * 0.9 + ph) > 0.2 || reduce) ell(g, 17.2, -13.6, 1.4, 1.9, 0, "#FF7E8E");
+      eye(g, 12.2, -23, 2.3); blush(g, 11, -17.5, 2.4);
+      soft(g, 1.5, -20, 4.2, 7.6, v.e, 0.35); },
+    corgi(g, t, ph) { const c = "#E59A47", wt = "#FFF6EA", w = walkA(t, ph) * 0.8;
+      circ(g, -15, -10, 4, wt); soft(g, -10 - w, -2.2, 2.6, 2.4, c); soft(g, -4 + w, -2.2, 2.6, 2.4, c);
+      soft(g, -2, -9.5, 14, 7.5, c); soft(g, 0, -6.5, 10, 3.6, wt);
+      soft(g, 6 - w, -2.2, 2.6, 2.4, wt); soft(g, 11 + w, -2.2, 2.6, 2.4, wt);
+      tri(g, [5, -25], [4, -38], [11.5, -28], c); tri(g, [6.2, -27], [5.4, -35], [9.8, -28.5], "#F7B8B8");
+      tri(g, [11, -28], [15, -39], [18, -27], c); tri(g, [12.5, -28.5], [15, -36], [16.6, -28], "#F7B8B8");
+      soft(g, 12, -20, 9.8, 9.2, c); soft(g, 15, -16, 5.6, 4.3, wt); soft(g, 12, -23.5, 1.6, 4.4, wt);
+      nose(g, 20.2, -17.5, 1.8); eye(g, 14.4, -21.5, 2.1); eye(g, 9.4, -21.8, 1.6); blush(g, 12.4, -16.4, 2.2); smile(g, 18.6, -16.2, 1.3); },
+    shiba(g, t, ph) { const c = "#D9853B", cr = "#FBEBD4", w = walkA(t, ph);
+      g.strokeStyle = c; g.lineWidth = 4.4; g.lineCap = "round"; g.beginPath(); g.arc(-11, -19, 4.2, 0.2 * Math.PI, 1.95 * Math.PI); g.stroke();
+      g.strokeStyle = cr; g.lineWidth = 1.4; g.beginPath(); g.arc(-11, -19, 4.2, 0.5 * Math.PI, 1.3 * Math.PI); g.stroke();
+      soft(g, -7 - w, -2.6, 3, 3, c); soft(g, 3 + w, -2.6, 3, 3, c);
+      soft(g, -2, -10, 10.5, 8.5, c); soft(g, 5, -9, 5, 6, cr);
+      soft(g, -3 + w, -2.4, 3, 3, cr); soft(g, 6 - w, -2.4, 3, 3, cr);
+      tri(g, [2, -27], [3, -36], [8.5, -29.5], c); tri(g, [3.3, -28.5], [3.8, -33.5], [7, -29.8], cr);
+      tri(g, [9, -30], [12.5, -37.5], [15.5, -28.5], c); tri(g, [10.5, -30], [12.5, -35], [14.2, -29.3], cr);
+      soft(g, 9, -21.5, 10.5, 10, c); soft(g, 13.5, -16.8, 6.6, 4.8, cr); soft(g, 5.5, -17.5, 3.6, 3.2, cr);
+      circ(g, 9.8, -26.2, 1.2, cr); circ(g, 14.2, -26, 1.2, cr);
+      nose(g, 19.3, -18.2, 1.8); eye(g, 12.3, -22.8, 2); eye(g, 7.8, -23, 1.6); blush(g, 11, -17.5, 2.2); smile(g, 17.6, -16.8, 1.4); },
+    cat(g, t, ph) { const v = pick(CATS, ph), w = walkA(t, ph) * 0.7, wag = wagA(t, ph, 2.5);
+      g.strokeStyle = v.c; g.lineWidth = 3.2; g.lineCap = "round"; g.beginPath(); g.moveTo(-10, -8); g.quadraticCurveTo(-18, -12, -16 + wag * 2, -24); g.stroke();
+      soft(g, -6 - w, -2.4, 2.8, 2.6, v.c); soft(g, 3 + w, -2.4, 2.8, 2.6, v.c);
+      soft(g, -2, -9, 10, 7.5, v.c); soft(g, -4 + w, -2.2, 2.8, 2.6, v.c); soft(g, 5 - w, -2.2, 2.8, 2.6, v.c);
+      tri(g, [1.5, -24], [1.5, -33], [7.5, -27], v.c); tri(g, [2.8, -25.5], [2.8, -30.5], [6, -27], "#F7B8C2");
+      tri(g, [8, -28], [12.5, -34], [14.5, -25], v.c); tri(g, [9.5, -28], [12.3, -31.8], [13.4, -26.5], "#F7B8C2");
+      soft(g, 8, -19.5, 9.2, 8.6, v.c);
+      g.strokeStyle = v.s; g.lineWidth = 1.2; [[5, -27, 5.5, -24], [8, -27.6, 8, -24.5], [11, -27, 10.5, -24]].forEach(([a, b, c2, d]) => { g.beginPath(); g.moveTo(a, b); g.lineTo(c2, d); g.stroke(); });
+      if (v.y) { circ(g, 11.5, -20.5, 2.2, "#F2D04A"); circ(g, 11.5, -20.5, 1.1, EYE); circ(g, 11, -21.2, 0.5, "#FFFFFF"); circ(g, 6.2, -20.6, 1.8, "#F2D04A"); circ(g, 6.2, -20.6, 0.9, EYE); }
+      else { eye(g, 11.5, -20.5, 2); eye(g, 6.2, -20.6, 1.6); }
+      tri(g, [14.8, -17.5], [16.8, -17.5], [15.8, -16], "#F28A9A"); smile(g, 15, -15.6, 1); blush(g, 10, -16.4, 2);
+      g.strokeStyle = "rgba(120,110,105,0.7)"; g.lineWidth = 0.5; [[-1.5], [0], [1.5]].forEach(([d]) => { g.beginPath(); g.moveTo(16, -16.5 + d); g.lineTo(21, -17.5 + d * 1.6); g.stroke(); }); },
+    rabbit(g, t, ph) { const v = pick(["#FFFFFF", "#D8B38C", "#BDB8B2"], ph); g.translate(0, -hop(t, ph, 2.2));
+      circ(g, -9, -8, 3.6, "#FFFFFF"); soft(g, -1, -8, 8.5, 7.6, v); soft(g, 5, -1.6, 4, 2, v);
+      soft(g, 2.5, -31, 2.9, 9.4, v, -0.2); soft(g, 8, -32, 2.9, 9.4, v, 0.15); ell(g, 2.4, -30.5, 1.3, 6.4, -0.2, "#F7B3C0"); ell(g, 8, -31.5, 1.3, 6.4, 0.15, "#F7B3C0");
+      soft(g, 6, -17, 8.2, 7.6, v); eye(g, 9, -18, 1.9); eye(g, 4, -18.2, 1.5); tri(g, [12.6, -15.6], [14.2, -15.6], [13.4, -14.4], "#F28A9A"); blush(g, 8.4, -14.2, 1.9); },
+    squirrel(g, t, ph) { const c = "#B9672F", l = "#D78B4E", b = "#F3D9B8", w = wagA(t, ph, 3) * 0.08; g.translate(0, -hop(t, ph, 1.6) * 0.5);
+      g.save(); g.rotate(w); soft(g, -10, -17, 7.5, 12.5, l, -0.3); soft(g, -9, -27, 6, 5, l); soft(g, -9.5, -17, 3.6, 8, c, -0.3); g.restore();
+      soft(g, 0, -9, 7, 8, c); soft(g, 2, -8, 3.6, 5.2, b); soft(g, 5, -19, 7, 6.6, c);
+      tri(g, [1.5, -24], [2.5, -30.5], [6, -25], c); soft(g, 8, -16.5, 3.4, 2.6, b);
+      soft(g, 5.5, -11, 2.4, 2.8, "#9C6B3A"); ell(g, 5.5, -13.6, 2.7, 1.2, 0, "#5C3B22");
+      eye(g, 7.4, -20, 1.8); nose(g, 11.8, -18.6, 1); blush(g, 7, -15.6, 1.6); },
+    bird(g, t, ph) { const v = pick([["#4A8FE0", "#D9ECFF", "#2F6FC0"], ["#F7C948", "#FFF4C8", "#E0A82E"], ["#E8705A", "#FFE2D6", "#C2503C"]], ph); g.translate(0, -hop(t, ph, 3) * 0.8);
+      g.strokeStyle = "#E39B3A"; g.lineWidth = 1.1; g.beginPath(); g.moveTo(-2, -2); g.lineTo(-2, 0); g.moveTo(2, -2); g.lineTo(2, 0); g.stroke();
+      poly(g, [-6, -9, -12, -13, -11, -7], v[2]); soft(g, 0, -9, 8, 7.6, v[0]); soft(g, 2, -6.8, 4.8, 4.2, v[1]); soft(g, -2.5, -9, 4.6, 3, v[2], 0.4);
+      tri(g, [6.8, -11], [11, -9.6], [6.8, -8.2], "#F2A33A"); eye(g, 3.8, -11.6, 1.5); blush(g, 4.6, -8.4, 1.6); },
+    butterfly(g, t, ph) { const v = pick([["#F28AB2", "#FBD3E3"], ["#7EB6F2", "#D2E7FD"], ["#F6C343", "#FFF0B8"], ["#B79CF2", "#E6DBFF"]], ph);
+      const bob = reduce ? 0 : Math.sin(t * 2 + ph) * 4, f = reduce ? 0.8 : 0.3 + 0.7 * Math.abs(Math.sin(t * 9 + ph));
+      g.translate(0, -30 + bob); g.save(); g.scale(f, 1);
+      soft(g, -6, -4, 6.4, 5.2, v[0], -0.4); soft(g, 6, -4, 6.4, 5.2, v[0], 0.4); soft(g, -4.6, 3, 4, 3.4, v[1], 0.3); soft(g, 4.6, 3, 4, 3.4, v[1], -0.3);
+      circ(g, -6, -5, 1.4, "#FFFFFF"); circ(g, 6, -5, 1.4, "#FFFFFF"); g.restore();
+      ell(g, 0, 0, 1.3, 6, 0, "#3A2E2A"); g.strokeStyle = "#3A2E2A"; g.lineWidth = 0.6; g.beginPath(); g.moveTo(0, -5); g.lineTo(-2.5, -10); g.moveTo(0, -5); g.lineTo(2.5, -10); g.stroke(); },
+    hedgehog(g, t, ph) { const sp = "#7B5A42", w = walkA(t, ph) * 0.5;
+      for (let i = 0; i <= 14; i++) { const a = Math.PI + (i / 14) * Math.PI * 0.95, x = Math.cos(a) * 12, y = -7 + Math.sin(a) * 8.5; tri(g, [x - 2, y + 1], [x * 1.25, -7 + Math.sin(a) * 12], [x + 2, y + 1], i % 2 ? sp : shade(sp, 0.8)); }
+      soft(g, 0, -7, 12, 8.5, sp); soft(g, -5 - w, -1.2, 2.2, 1.6, "#5E4330"); soft(g, 5 + w, -1.2, 2.2, 1.6, "#5E4330");
+      soft(g, 9, -6, 6.4, 5.4, "#F1DCC0"); nose(g, 15.2, -6.6, 1.5); eye(g, 10.8, -8.2, 1.6); blush(g, 11, -4.6, 1.7); },
+    duck(g, t, ph) { const c = "#FFD84D", wi = "#F2BE2E"; g.translate(0, -hop(t, ph, 2.6) * 0.5);
+      ell(g, -2, -0.8, 3, 1.2, 0, "#F29A3A"); ell(g, 3, -0.8, 3, 1.2, 0, "#F29A3A");
+      tri(g, [-8, -10], [-12.5, -15], [-6, -13], c); soft(g, -1, -8, 9.5, 7.5, c); soft(g, -2, -8.5, 5, 3.4, wi, 0.3);
+      soft(g, 6, -17, 7, 6.6, c); g.strokeStyle = wi; g.lineWidth = 1; g.beginPath(); g.moveTo(5, -23.5); g.quadraticCurveTo(6, -27, 8, -25); g.stroke();
+      ell(g, 12.4, -15.6, 3.6, 1.8, 0, "#F29A3A"); eye(g, 7.6, -18.4, 1.6); blush(g, 8, -14.6, 1.8); },
+    frog(g, t, ph) { const c = "#7CC56B", d = "#5AA34B", b = "#DDF2C9"; g.translate(0, -hop(t, ph, 1.4) * 1.2);
+      soft(g, -7, -3, 5, 3, d); soft(g, 7, -3, 5, 3, d); soft(g, 0, -8, 10.5, 8, c); soft(g, 1, -6, 6.4, 4.6, b);
+      soft(g, -4.5, -15, 4.2, 4, c); soft(g, 4.5, -15.4, 4.2, 4, c); circ(g, -4.5, -15.4, 2.8, "#FFFFFF"); circ(g, 4.5, -15.8, 2.8, "#FFFFFF");
+      eye(g, -4.2, -15.4, 1.6); eye(g, 4.8, -15.8, 1.6); smile(g, 0, -10.5, 3); blush(g, -6.5, -9.5, 1.8); blush(g, 6.5, -9.5, 1.8);
+      soft(g, -4, -1.6, 2.8, 1.6, d); soft(g, 4, -1.6, 2.8, 1.6, d); },
+    owl(g, t, ph) { const c = "#9C6B45", b = "#E8D3B5", d = "#6E4A2E", blink = !reduce && Math.sin(t * 0.8 + ph) > 0.97;
+      ell(g, -3, -0.8, 2.4, 1.2, 0, "#F2A33A"); ell(g, 3, -0.8, 2.4, 1.2, 0, "#F2A33A");
+      soft(g, 0, -14, 10, 13.5, c); soft(g, 0, -9.5, 6.4, 7.6, b);
+      g.strokeStyle = d; g.lineWidth = 0.7; [[-3, -10], [2, -10], [-1, -6.5], [3.5, -6.5], [-3.5, -6.5]].forEach(([x, y]) => { g.beginPath(); g.arc(x, y, 1.2, 0.1 * Math.PI, 0.9 * Math.PI); g.stroke(); });
+      soft(g, -8.6, -13, 3.4, 8, d, 0.15); soft(g, 8.6, -13, 3.4, 8, d, -0.15);
+      tri(g, [-8, -24], [-9, -31], [-3, -26], c); tri(g, [8, -24], [9, -31], [3, -26], c);
+      circ(g, -4, -20, 4.8, "#F5E9D6"); circ(g, 4, -20, 4.8, "#F5E9D6");
+      if (blink) { g.strokeStyle = EYE; g.lineWidth = 1; g.beginPath(); g.moveTo(-6, -20); g.lineTo(-2, -20); g.moveTo(2, -20); g.lineTo(6, -20); g.stroke(); }
+      else { eye(g, -4, -20, 2.5); eye(g, 4, -20, 2.5); }
+      tri(g, [-1.3, -17.4], [1.3, -17.4], [0, -14.6], "#F2A33A"); },
+    raccoon(g, t, ph) { const c = "#8E8D92", d = "#3B3A3E", l = "#ECE9E4", w = walkA(t, ph);
+      [[-14, -12, c], [-17.5, -13.5, d], [-21, -15, c], [-24.5, -16.5, d]].forEach(([x, y, col]) => soft(g, x, y, 4.2, 4.6, col, -0.5));
+      soft(g, -6 - w, -2.6, 3, 2.8, d); soft(g, 4 + w, -2.6, 3, 2.8, d); soft(g, -1, -10, 12, 8, c); soft(g, -3 + w, -2.4, 3, 2.8, d); soft(g, 7 - w, -2.4, 3, 2.8, d);
+      tri(g, [4, -25], [5, -32], [9.5, -27], c); tri(g, [10, -27.5], [14, -32.5], [15.5, -25], c);
+      soft(g, 10, -20, 9.6, 8.6, c); soft(g, 13, -16.6, 6, 4.4, l); soft(g, 11, -21, 6.8, 2.9, d, 0.1);
+      ell(g, 9, -24.2, 3, 1.1, 0, l); ell(g, 14.2, -24, 2.4, 1, 0, l);
+      circ(g, 13.4, -21.2, 1.8, "#0E0C0C"); circ(g, 12.8, -21.9, 0.7, "#FFFFFF"); circ(g, 8.2, -21.2, 1.5, "#0E0C0C"); circ(g, 7.7, -21.8, 0.6, "#FFFFFF");
+      nose(g, 19, -17.6, 1.6); blush(g, 12, -15.8, 1.9); },
+    fox(g, t, ph) { const c = "#EC7A2C", wt = "#FFF4E8", d = "#3A2A22", w = walkA(t, ph), wag = wagA(t, ph, 2) * 0.1;
+      g.save(); g.translate(-12, -14); g.rotate(-0.45 + wag); soft(g, -7, 0, 11, 5.6, c); soft(g, -15.5, 0, 4.2, 3.6, wt); g.restore();
+      soft(g, -6 - w, -2.6, 2.6, 3.2, d); soft(g, 4 + w, -2.6, 2.6, 3.2, d); soft(g, -1, -11, 13, 7.5, c); soft(g, 7, -11, 4.6, 5.6, wt);
+      soft(g, -3 + w, -2.4, 2.6, 3.2, d); soft(g, 7 - w, -2.4, 2.6, 3.2, d);
+      tri(g, [6, -26], [7, -36], [12, -28], c); tri(g, [6.8, -32.5], [7, -36], [8.8, -33], d);
+      tri(g, [12, -28], [16, -37], [18.5, -26.5], c); tri(g, [15, -34.5], [16, -37], [17.1, -34], d);
+      soft(g, 12, -21, 9, 8.2, c); soft(g, 16, -17, 6.4, 4.2, wt); tri(g, [17, -19.5], [24, -18], [17, -15], c); tri(g, [18, -17], [24, -18], [18.5, -15.2], wt);
+      nose(g, 24, -18.2, 1.5); eye(g, 14.6, -23, 1.9); eye(g, 9.6, -23, 1.5); blush(g, 13.4, -17.8, 2); },
+    deer(g, t, ph) { const c = "#C08550", s = "#F6E7D2", d = "#6B4428", be = "#E9C9A3", w = reduce ? 0 : Math.sin(t * 6 + ph) * 1.4;
+      g.strokeStyle = d; g.lineWidth = 2.6; g.lineCap = "round"; [[-9, w], [-4, -w], [6, -w], [10, w]].forEach(([x, o]) => { g.beginPath(); g.moveTo(x, -18); g.lineTo(x + o, -1); g.stroke(); });
+      soft(g, 0, -21, 13, 7.6, c); soft(g, 1, -17.5, 8, 3, be); [[-5, -24], [1, -25], [-9, -21], [5.5, -22.5], [-2, -21]].forEach(([x, y]) => circ(g, x, y, 1.3, s)); circ(g, -13, -24, 2.6, s);
+      soft(g, 9.5, -28, 4, 8, c, 0.3); soft(g, 13, -36, 8, 7, c); soft(g, 18.6, -33.4, 4, 3.2, be);
+      soft(g, 6.6, -40.6, 5.2, 2.5, c, -0.55); ell(g, 6.6, -40.6, 3.4, 1.3, -0.55, "#F2B9BF");
+      nose(g, 22, -34.2, 1.4); eye(g, 15.4, -37.2, 2.1); blush(g, 14.6, -32.8, 2); },
+    turtle(g, t, ph) { const sh = "#6FAF5B", w = walkA(t, ph) * 0.4;
+      soft(g, -7 - w, -2, 3.2, 2, "#A6D17D"); soft(g, 7 + w, -2, 3.2, 2, "#A6D17D"); tri(g, [-13, -4], [-17, -3], [-13, -2], "#A6D17D");
+      soft(g, 15, -7, 4.6, 4, "#A6D17D"); eye(g, 16.6, -8.2, 1.3); smile(g, 17.4, -6.6, 1.2); blush(g, 15.6, -5.6, 1.3);
+      ell(g, 0, -3, 14, 2.6, 0, "#A9C97A"); soft(g, 0, -8, 13, 8.5, sh);
+      [[-5, -9], [4, -9], [0, -13], [-8, -5], [8, -5]].forEach(([x, y]) => soft(g, x, y, 3.2, 2.6, "#4E8F44")); },
+    bear(g, t, ph) { const c = "#8A5A3B", m = "#D9B08C", br = reduce ? 0 : Math.sin(t * 1.4 + ph) * 0.5;
+      soft(g, -7, -2.6, 5, 3.2, c); soft(g, 7, -2.6, 5, 3.2, c); circ(g, -7, -2.6, 2, m); circ(g, 7, -2.6, 2, m);
+      soft(g, 0, -13, 13, 12 + br, c); soft(g, 0, -10, 7.6, 7.6, m);
+      soft(g, -10.5, -14, 3.6, 6, c, 0.4); soft(g, 10.5, -14, 3.6, 6, c, -0.4);
+      circ(g, -8, -38, 4.4, c); circ(g, 8, -38, 4.4, c); circ(g, -8, -38, 2.2, m); circ(g, 8, -38, 2.2, m);
+      soft(g, 0, -30, 11.5, 10.5, c); soft(g, 0, -26.4, 5.4, 4, m); nose(g, 0, -28, 1.9); smile(g, 0, -26.6, 1.4);
+      eye(g, -4.8, -31.4, 1.8); eye(g, 4.8, -31.4, 1.8); blush(g, -7.4, -27.4, 2.2); blush(g, 7.4, -27.4, 2.2); },
+    panda(g, t, ph) { const wt = "#F7F5F0", bk = "#2A2828", br = reduce ? 0 : Math.sin(t * 1.4 + ph) * 0.5;
+      soft(g, -7, -2.6, 5, 3.2, bk); soft(g, 7, -2.6, 5, 3.2, bk);
+      soft(g, 0, -13, 13, 12 + br, wt);
+      g.strokeStyle = "#5FA04A"; g.lineWidth = 2.2; g.beginPath(); g.moveTo(12, -4); g.lineTo(15, -26); g.stroke(); ell(g, 17, -24, 4, 1.6, -0.6, "#7CC56B"); ell(g, 16, -18, 3.6, 1.4, 0.5, "#7CC56B");
+      soft(g, -10.5, -14, 3.8, 6.4, bk, 0.4); soft(g, 10.5, -14, 3.8, 6.4, bk, -0.4);
+      circ(g, -8, -38, 4.4, bk); circ(g, 8, -38, 4.4, bk);
+      soft(g, 0, -30, 11.5, 10.5, wt); ell(g, -4.8, -31, 3, 3.8, 0.5, bk); ell(g, 4.8, -31, 3, 3.8, -0.5, bk);
+      circ(g, -4.6, -31.4, 1.3, "#FFFFFF"); circ(g, 4.6, -31.4, 1.3, "#FFFFFF"); circ(g, -4.4, -31.2, 0.7, bk); circ(g, 4.4, -31.2, 0.7, bk);
+      nose(g, 0, -27, 1.7); smile(g, 0, -25.8, 1.3); blush(g, -7.8, -26.6, 2); blush(g, 7.8, -26.6, 2); },
+    butterflies(g, t, ph) {
+      for (let i = 0; i < 3; i++) { const a = (reduce ? i * 2.1 : t * (0.7 + i * 0.15) + i * 2.1) + ph, x = Math.cos(a) * (16 + i * 4), y = Math.sin(a * 1.3) * 7 - i * 9;
+        g.save(); g.translate(x, y + 4); g.scale(0.85 - i * 0.08, 0.85 - i * 0.08); ANIM.butterfly(g, t + i * 1.7, ph + i * 0.37); g.restore(); } },
+    pond(g, t, ph) { const gr = g.createLinearGradient(0, -24, 0, 4); gr.addColorStop(0, "#8BD0E6"); gr.addColorStop(1, "#3A86AE");
+      ell(g, 0, -10, 47, 15.5, 0, "#C9B78A"); ell(g, 0, -10, 43, 13, 0, gr);
+      g.globalAlpha = 0.35; ell(g, -12, -15, 16, 2.4, 0, "#FFFFFF"); g.globalAlpha = 1;
+      const a = reduce ? 1 : t * 0.7 + ph; ell(g, Math.cos(a) * 24, -10 + Math.sin(a) * 5, 4.5, 2.2, 0, "#F28C38");
+      const b = reduce ? 3 : -t * 0.5 + ph * 2; ell(g, Math.cos(b) * 16, -10 + Math.sin(b) * 4, 3.6, 1.8, 0, "#F4C64E");
+      ell(g, 20, -14, 6, 3, 0, "#4FA35E"); circ(g, 22, -15, 1.6, "#F7A9C0"); ell(g, -26, -7, 4.6, 2.3, 0, "#4FA35E");
+      for (let i = 0; i < 4; i++) { g.strokeStyle = "#5E8A3E"; g.lineWidth = 1.2; const x = 36 + i * 2.5; g.beginPath(); g.moveTo(x, -6); g.lineTo(x + (i - 1.5), -22 - i * 2); g.stroke(); } ell(g, 40, -24, 1.2, 3.5, 0, "#7A5236"); },
+    sunflower(g, t, ph) { const sw = reduce ? 0 : Math.sin(t * 0.9 + ph) * 0.05; softShadow(g, 10, 0.22);
+      g.save(); g.rotate(sw); g.strokeStyle = "#4C8A3E"; g.lineWidth = 2.2; g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(-2, -22, 1, -40); g.stroke();
+      soft(g, -5, -18, 5, 2.4, "#5E9A4C", -0.5); soft(g, 5, -26, 5, 2.4, "#5E9A4C", 0.5);
+      for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; ell(g, 1 + Math.cos(a) * 6.5, -42 + Math.sin(a) * 6.5, 3.6, 1.6, a, i % 2 ? "#F7C531" : "#F2B11B"); }
+      soft(g, 1, -42, 4.6, 4.6, "#7A4A22"); g.restore(); },
+    lantern(g) { softShadow(g, 9); rect(g, -1.4, -38, 2.8, 38, "#3B3A3E"); rect(g, -3, -2, 6, 2, "#3B3A3E");
+      rrect(g, -4.5, -46, 9, 9, 1.5, "#3B3A3E"); rect(g, -3.2, -44.8, 6.4, 6.6, isNight() ? "#FFE48A" : "#F6EBC4"); poly(g, [-5.5, -46, 0, -50, 5.5, -46], "#3B3A3E"); },
+    campfire(g, t) { softShadow(g, 18);
+      g.save(); g.rotate(0.35); rrect(g, -12, -4, 24, 4.4, 2, "#7A5236"); g.restore(); g.save(); g.rotate(-0.35); rrect(g, -12, -4, 24, 4.4, 2, "#8E6240"); g.restore();
+      for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2; soft(g, Math.cos(a) * 12, -1 + Math.sin(a) * 2.4, 2.6, 1.8, "#9A9FA3"); }
+      const f = reduce ? 1 : 0.85 + Math.sin(t * 11) * 0.1 + Math.sin(t * 7.3) * 0.08;
+      g.save(); g.translate(0, -3); g.scale(1, f);
+      g.beginPath(); g.moveTo(-7, 0); g.quadraticCurveTo(-8, -10, 0, -22); g.quadraticCurveTo(8, -10, 7, 0); g.closePath(); g.fillStyle = "#F26B2A"; g.fill();
+      g.beginPath(); g.moveTo(-4, 0); g.quadraticCurveTo(-5, -7, 0, -15); g.quadraticCurveTo(5, -7, 4, 0); g.closePath(); g.fillStyle = "#F9B23B"; g.fill();
+      g.beginPath(); g.moveTo(-2, 0); g.quadraticCurveTo(-2.5, -4, 0, -8); g.quadraticCurveTo(2.5, -4, 2, 0); g.closePath(); g.fillStyle = "#FFF0A8"; g.fill(); g.restore(); },
+    cabin(g) { softShadow(g, 44); const wl = "#A8713F";
+      rect(g, 14, -66, 7, 18, "#8C8F94"); rect(g, 13, -68, 9, 3, "#6E7176");
+      const gr = g.createLinearGradient(-30, 0, 30, 0); gr.addColorStop(0, shade(wl, 1.15)); gr.addColorStop(1, shade(wl, 0.75)); rect(g, -30, -36, 60, 36, gr);
+      g.strokeStyle = "rgba(60,35,18,0.45)"; g.lineWidth = 0.8; for (let y = -32; y < 0; y += 5) { g.beginPath(); g.moveTo(-30, y); g.lineTo(30, y); g.stroke(); }
+      poly(g, [-36, -34, 0, -64, 36, -34], "#7E2F24"); poly(g, [-36, -34, 0, -64, 0, -60, -31, -34], "#9A3B2E");
+      rect(g, 4, -24, 13, 24, "#5C3B22"); circ(g, 14, -12, 1, "#F2C94C");
+      rect(g, -22, -26, 14, 12, "#5C3B22"); rect(g, -20.5, -24.5, 11, 9, isNight() ? "#FFDC7A" : "#BFE0F2"); rect(g, -15.5, -24.5, 1, 9, "#5C3B22"); rect(g, -20.5, -20.5, 11, 1, "#5C3B22"); },
+  };
+  function drawItem(g, type, x, y, k, dir, t, ph, variant) {
+    const it = ITEMS[type]; if (!it) return;
+    g.save(); g.translate(x, y);
+    if (STILL[type]) {
+      const sp = sprite(type, variant || 0); g.scale(k * dir, k);
+      if ((it.kind === "tree" || it.sway) && !reduce) g.transform(1, 0, Math.sin(t * (it.sway ? 1.1 : 0.8) + ph) * (it.sway ? 0.035 : 0.02), 1, 0, 0);
+      g.drawImage(sp.cv, -sp.ox, -sp.oy, sp.cv.width / SPR, sp.cv.height / SPR);
+    } else {
+      g.scale(k * dir, k);
+      if (it.kind === "animal") ell(g, 0, 0, it.w * 0.38, 3.2, 0, "rgba(0,0,0,0.16)");
+      ANIM[type](g, t, ph);
+    }
+    g.restore();
+  }
+  function miniCanvas(type, px, locked) { const dpr = Math.min(window.devicePixelRatio || 1, 2), cv = h("canvas", { width: px * dpr, height: px * dpr, "aria-hidden": "true" }); paintMini(cv, type, locked); return cv; }
+  function paintMini(cv, type, locked) {
+    const g = cv.getContext("2d"), s = cv.width, it = ITEMS[type]; g.clearRect(0, 0, s, s);
+    const k = Math.min((s * 0.8) / (it.h + 6), (s * 0.84) / it.w);
+    g.save(); if (locked) g.globalAlpha = 0.35; drawItem(g, type, s / 2, s * 0.5 + ((it.h + 6) * k) / 2, k, 1, 1.2, 0.3, 0); g.restore();
+  }
+
+  /* ---------- forest scene ---------- */
+  const canvas = $("#scene"), ctx = canvas.getContext("2d");
+  let W = 800, H = 420;
+  const horizon = () => H * 0.3;
+  const band = () => ({ top: horizon() + 30 + (state.bg === "lake" ? 26 : 0), bot: H - 14 });
+  function toPx(p) { const b = band(); return { x: 26 + p.x * (W - 52), y: b.top + p.y * (b.bot - b.top) }; }
+  function fromPx(x, y) { const b = band(); return { x: Math.min(1, Math.max(0, (x - 26) / (W - 52))), y: Math.min(1, Math.max(0, (y - b.top) / (b.bot - b.top))) }; }
+  const depthK = (py) => (0.6 + 0.55 * py) * Math.min(1.2, Math.max(0.68, H / 420));
+  function resize() {
+    const r = canvas.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = Math.max(240, r.width); H = Math.max(220, r.height);
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (reduce) draw(0);
+  }
+  new ResizeObserver(resize).observe(canvas);
+  function pop(id) { if (id !== state.justAdded) return 1; const p = (performance.now() - state.justAddedAt) / 1400; return p >= 1 ? 1 : 1 + 0.5 * Math.sin(p * Math.PI); }
+
+  function sceneItems(t) {
+    const list = [];
+    planted().forEach((b) => list.push({ id: b.id, ref: "book", book: b, type: b.plant.type, pos: b.plant }));
+    state.decos.forEach((d) => { if (ITEMS[d.type]) list.push({ id: d.id, ref: "deco", deco: d, type: d.type, pos: d }); });
+    return list.map((s) => {
+      const p = state.drag && state.drag.id === s.id ? state.drag.pos : s.pos;
+      const it = ITEMS[s.type], r = rng(hash(s.id)), ph = r(), dir0 = r() < 0.5 ? 1 : -1, variant = Math.floor(r() * 3);
+      let { x, y } = toPx(p), dir = it.kind === "deco" ? 1 : dir0;
+      if (it.kind === "animal" && !reduce && !(state.drag && state.drag.id === s.id)) {
+        const sp = 0.22 + r() * 0.2, range = s.type === "butterfly" ? 26 : (s.type === "turtle" ? 5 : 10);
+        x += Math.sin(t * sp + ph * 6) * range; dir = Math.cos(t * sp + ph * 6) >= 0 ? 1 : -1;
+      }
+      return { ...s, it, x, y, k: depthK(p.y) * pop(s.id), dir, ph: ph * 6, variant };
+    });
+  }
+  const PET = ["#F2C94C", "#F28AB2", "#FFFFFF", "#B79CF2", "#FF9E6B"];
+  function drawBackground(g, t) {
+    const B = BGS[state.bg] || BGS.meadow, hz = horizon();
+    const sk = g.createLinearGradient(0, 0, 0, hz + 30); sk.addColorStop(0, B.sky[0]); sk.addColorStop(1, B.sky[1]); g.fillStyle = sk; g.fillRect(0, 0, W, hz + 34);
+    if (isNight()) { const r = rng(7); for (let i = 0; i < 70; i++) { g.globalAlpha = 0.3 + 0.55 * Math.abs(Math.sin(t * 0.6 + i)); circ(g, r() * W, r() * hz, r() * 1.2 + 0.4, "#FFFFFF"); } g.globalAlpha = 1; }
+    const orbX = W - 72, orbY = hz * 0.45;
+    if (!isNight()) { const og = g.createRadialGradient(orbX, orbY, 4, orbX, orbY, 60); og.addColorStop(0, "rgba(255,240,190,0.55)"); og.addColorStop(1, "rgba(255,240,190,0)"); g.fillStyle = og; g.fillRect(orbX - 60, orbY - 60, 120, 120); }
+    circ(g, orbX, orbY, 20, isNight() ? "#F1EBD0" : B.orb); if (isNight()) circ(g, orbX + 9, orbY - 5, 17, B.sky[0]);
+    if (!isNight()) { const cr = rng(51); for (let i = 0; i < 3; i++) { const cx = ((cr() * W + t * (4 + i * 2)) % (W + 160)) - 80, cy = 18 + cr() * hz * 0.5; g.globalAlpha = 0.75;
+      circ(g, cx, cy, 12, "#FFFFFF"); circ(g, cx + 14, cy + 3, 10, "#FFFFFF"); circ(g, cx - 14, cy + 4, 9, "#FFFFFF"); g.globalAlpha = 1; } }
+    // far ridge
+    g.fillStyle = shade(B.hill, 0.92); g.beginPath(); g.moveTo(0, hz + 30); for (let x = 0; x <= W + 40; x += 40) g.lineTo(x, hz - 4 + Math.sin(x * 0.012 + 1) * 10); g.lineTo(W, hz + 30); g.closePath(); g.fill();
+    // tree line
+    g.fillStyle = B.hill; g.beginPath(); g.moveTo(0, hz + 30); const fr = rng(21);
+    for (let x = -10; x <= W + 30; x += 18) { const hh = 12 + fr() * 20; g.lineTo(x, hz + 20 - hh); g.lineTo(x + 9, hz + 20); }
+    g.lineTo(W, hz + 30); g.closePath(); g.fill();
+    const gr = g.createLinearGradient(0, hz + 10, 0, H); gr.addColorStop(0, B.ground[0]); gr.addColorStop(1, B.ground[1]);
+    g.fillStyle = gr; g.beginPath(); g.moveTo(0, hz + 18); g.quadraticCurveTo(W * 0.5, hz + 4, W, hz + 18); g.lineTo(W, H); g.lineTo(0, H); g.closePath(); g.fill();
+    if (B.fx === "lake") { const ly = hz + 18, lg = g.createLinearGradient(0, ly, 0, ly + 40); lg.addColorStop(0, "#7CC3E0"); lg.addColorStop(1, "#4D9CC4");
+      g.fillStyle = lg; g.beginPath(); g.moveTo(-10, ly + 6); g.quadraticCurveTo(W * 0.5, ly - 4, W + 10, ly + 6); g.quadraticCurveTo(W * 0.6, ly + 44, -10, ly + 34); g.closePath(); g.fill();
+      g.strokeStyle = "rgba(255,255,255,0.55)"; g.lineWidth = 1.2; for (let i = 0; i < 8; i++) { const x = ((i * 137 + t * 8) % W), y = ly + 10 + (i % 3) * 7; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 18, y); g.stroke(); } }
+    const tr = rng(33); g.strokeStyle = shade(B.ground[1], 0.85); g.lineWidth = 1.2;
+    for (let i = 0; i < 80; i++) { const x = tr() * W, y = band().top + tr() * (H - band().top - 4); g.beginPath(); g.moveTo(x - 3, y); g.lineTo(x - 1, y - 5); g.moveTo(x, y); g.lineTo(x + 1, y - 6); g.moveTo(x + 3, y); g.lineTo(x + 3, y - 4); g.stroke(); }
+  }
+  function drawWeather(g, t) {
+    const B = BGS[state.bg]; if (!B || !B.fx || reduce) return;
+    const r = rng(77);
+    if (B.fx === "snow") { g.fillStyle = "#FFFFFF"; for (let i = 0; i < 70; i++) { const sp = 14 + r() * 22, x = (r() * W + Math.sin(t + i) * 12) % W, y = (r() * H + t * sp) % H; g.globalAlpha = 0.6 + r() * 0.4; circ(g, x, y, 1 + r() * 1.8, "#FFFFFF"); } g.globalAlpha = 1; }
+    if (B.fx === "petals" || B.fx === "leaves") { const cols = B.fx === "petals" ? ["#F7C7D5", "#F2A9BE", "#FFFFFF"] : ["#E8783A", "#F2A33C", "#CF5530", "#F6BE55"];
+      for (let i = 0; i < 26; i++) { const sp = 12 + r() * 16, x = (r() * W + t * 14 + Math.sin(t * 1.3 + i) * 18) % W, y = (r() * H + t * sp) % H; g.save(); g.translate(x, y); g.rotate(t * 2 + i);
+        ell(g, 0, 0, B.fx === "petals" ? 2.6 : 3.2, B.fx === "petals" ? 1.5 : 2, 0, cols[i % cols.length]); g.restore(); } }
+  }
+  function draw(t) {
+    const g = ctx; g.clearRect(0, 0, W, H);
+    drawBackground(g, t);
+    const items = state.mode === "loading" ? [] : sceneItems(t);
+    items.filter((s) => s.ref === "book").forEach((s) => (s.book.quotes || []).slice(0, 12).forEach((_, i) => {
+      const r = rng(hash(s.id + ":" + i)), a = r() * Math.PI * 2, d = (s.it.w * 0.45 + 10 + r() * 22) * s.k;
+      const x = s.x + Math.cos(a) * d, y = s.y + Math.sin(a) * d * 0.35 + 4, f = (2 + r() * 1.3) * Math.min(1.2, s.k), pc = PET[Math.floor(r() * PET.length)];
+      for (let p = 0; p < 5; p++) { const an = p * Math.PI * 2 / 5; circ(g, x + Math.cos(an) * f, y + Math.sin(an) * f, f * 0.8, pc); }
+      circ(g, x, y, f * 0.6, "#E89B2E");
+    }));
+    const flat = items.filter((s) => s.it.flat), up = items.filter((s) => !s.it.flat).sort((a, b) => a.y - b.y);
+    const ring = (s) => { if (state.selected !== s.id && !(state.drag && state.drag.id === s.id)) return;
+      g.save(); g.setLineDash([5, 4]); g.strokeStyle = "#FFC25C"; g.lineWidth = 2; g.beginPath(); g.ellipse(s.x, s.y - (s.it.flat ? 8 * s.k : 0), s.it.w * 0.55 * s.k + 6, (s.it.flat ? 16 : 8) * s.k + 4, 0, 0, Math.PI * 2); g.stroke(); g.restore(); };
+    flat.forEach((s) => { drawItem(g, s.type, s.x, s.y, s.k, s.dir, t, s.ph, s.variant); ring(s); });
+    up.forEach((s) => { ring(s); drawItem(g, s.type, s.x, s.y, s.k, s.dir, t, s.ph, s.variant); });
+    drawWeather(g, t);
+    if (isNight()) {
+      g.fillStyle = state.bg === "starry" && !NIGHT ? "rgba(8,14,40,0.28)" : "rgba(6,12,34,0.42)"; g.fillRect(0, 0, W, H);
+      items.forEach((s) => { const gl = s.it.glow; if (!gl) return; const fl = s.type === "campfire" && !reduce ? 1 + Math.sin(t * 9) * 0.08 : 1;
+        const gx = s.x + gl[0] * s.k, gy = s.y + gl[1] * s.k, rr = gl[2] * s.k * fl, rg = g.createRadialGradient(gx, gy, 0, gx, gy, rr);
+        rg.addColorStop(0, "rgba(255,214,120,0.55)"); rg.addColorStop(1, "rgba(255,214,120,0)"); g.fillStyle = rg; g.fillRect(gx - rr, gy - rr, rr * 2, rr * 2); });
+      const fr2 = rng(91), n = 20 + Math.min(40, quoteCount()), hz = horizon();
+      for (let i = 0; i < n; i++) { const bx = fr2() * W, by = hz + 30 + fr2() * (H - hz - 50), ph = fr2() * 6;
+        const x = bx + (reduce ? 0 : Math.sin(t * 0.5 + ph) * 14), y = by + (reduce ? 0 : Math.cos(t * 0.7 + ph) * 8); g.globalAlpha = 0.35 + 0.6 * Math.abs(Math.sin(t * 1.3 + ph));
+        circ(g, x, y, 4.5, "rgba(255,230,120,0.25)"); circ(g, x, y, 1.6, "#FFE680"); } g.globalAlpha = 1;
+    }
+  }
+  function frame(ts) { draw(ts / 1000); requestAnimationFrame(frame); }
+
+  function hitTest(px, py) {
+    const items = sceneItems(performance.now() / 1000).sort((a, b) => (b.it.flat ? -1 : 0) - (a.it.flat ? -1 : 0) || b.y - a.y);
+    for (const s of items) { const w = s.it.w * s.k * 0.5 + 6, top = s.it.flat ? s.it.h * s.k + 6 : s.it.h * s.k + 4; if (px >= s.x - w && px <= s.x + w && py >= s.y - top && py <= s.y + 8) return s; }
+    return null;
+  }
+  let down = null;
+  const local = (e) => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  canvas.addEventListener("pointerdown", (e) => {
+    const p = local(e), s = hitTest(p.x, p.y); down = { x: p.x, y: p.y, s };
+    if (state.editing && s) { const c = toPx(s.pos); state.drag = { id: s.id, ref: s.ref, dx: c.x - p.x, dy: c.y - p.y, pos: { x: s.pos.x, y: s.pos.y } }; state.selected = s.id;
+      canvas.setPointerCapture(e.pointerId); $("#forest").classList.add("dragging"); e.preventDefault(); }
+  });
+  canvas.addEventListener("pointermove", (e) => { if (!state.drag) return; const p = local(e), q = fromPx(p.x + state.drag.dx, p.y + state.drag.dy); state.drag.pos = { x: q.x, y: q.y }; if (reduce) draw(0); });
+  canvas.addEventListener("pointerup", async (e) => {
+    const p = local(e);
+    if (state.drag) {
+      const d = state.drag; state.drag = null; $("#forest").classList.remove("dragging");
+      if (d.ref === "book") { const b = state.books.find((x) => x.id === d.id);
+        if (b && (Math.abs(d.pos.x - b.plant.x) > 0.002 || Math.abs(d.pos.y - b.plant.y) > 0.002)) { b.plant = { ...b.plant, x: d.pos.x, y: d.pos.y }; await run(() => backend.update(d.id, { plant: b.plant })); } }
+      else { const dc = state.decos.find((x) => x.id === d.id);
+        if (dc && (Math.abs(d.pos.x - dc.x) > 0.002 || Math.abs(d.pos.y - dc.y) > 0.002)) { dc.x = d.pos.x; dc.y = d.pos.y; await run(() => backend.updateDeco(d.id, { x: d.pos.x, y: d.pos.y })); } }
+      showInfo(); return;
+    }
+    if (down && Math.hypot(p.x - down.x, p.y - down.y) < 8) { state.selected = down.s ? down.s.id : null; showInfo(); if (reduce) draw(0); }
+    down = null;
+  });
+  canvas.addEventListener("pointercancel", () => { state.drag = null; down = null; $("#forest").classList.remove("dragging"); });
+
+  function showInfo() {
+    const b = state.books.find((x) => x.id === state.selected && x.plant), d = state.decos.find((x) => x.id === state.selected);
+    const box = $("#info"); box.hidden = !b && !d; const acts = $("#info-acts"); acts.replaceChildren();
+    if (b) {
+      $("#info-kind").textContent = ITEMS[b.plant.type].name + (state.editing ? " · 끌어서 옮기기" : "");
+      $("#info-title").textContent = b.title;
+      $("#info-meta").textContent = [b.author, b.genre, b.finishedAt ? fmtDate(b.finishedAt) + " 완독" : "", b.rating ? "★".repeat(b.rating) : ""].filter(Boolean).join(" · ");
+      const q = (b.quotes || [])[0]; $("#info-quote").hidden = !q; if (q) $("#info-quote").textContent = q.text;
+      acts.append(h("button", { type: "button", class: "btn", onclick: () => openPlant(b.id) }, "다른 걸로 바꾸기"));
+    } else if (d) {
+      $("#info-kind").textContent = "장식" + (state.editing ? " · 끌어서 옮기기" : "");
+      $("#info-title").textContent = ITEMS[d.type].name;
+      $("#info-meta").textContent = "읽은 책과 구절로 얻은 장식이에요.";
+      $("#info-quote").hidden = true;
+      acts.append(h("button", { type: "button", class: "btn danger", onclick: async () => { state.selected = null; if (await run(() => backend.removeDeco(d.id))) toast(josa(ITEMS[d.type].name, "을", "를") + " 치웠어요. 장식 하나를 다시 놓을 수 있어요."); renderAll(); } }, "치우기"));
+    }
+  }
+  $("#info-x").addEventListener("click", () => { state.selected = null; showInfo(); if (reduce) draw(0); });
+  $("#f-edit").addEventListener("click", () => {
+    state.editing = !state.editing; $("#forest").classList.toggle("editing", state.editing);
+    $("#f-edit").setAttribute("aria-pressed", String(state.editing)); $("#f-edit").textContent = state.editing ? "다 꾸몄어요" : "숲 꾸미기";
+    $("#f-edit").classList.toggle("solid", state.editing);
+    if (state.editing) toast("나무, 동물, 장식을 끌어서 원하는 자리에 놓아 보세요."); showInfo();
+  });
+
+  function freeSpot() {
+    const pts = [...planted().map((b) => b.plant), ...state.decos]; let best = null, bestD = -1;
+    for (let i = 0; i < 24; i++) { const c = { x: 0.06 + Math.random() * 0.88, y: 0.08 + Math.random() * 0.84 };
+      const d = pts.length ? Math.min(...pts.map((p) => Math.hypot((p.x - c.x) * 1.6, p.y - c.y))) : 1; if (d > bestD) { bestD = d; best = c; } }
+    return best;
+  }
+
+  /* ---------- pickers ---------- */
+  const PLANT_TABS = [["tree", "나무"], ["animal", "동물"]], DECO_TABS = [["flower", "꽃"], ["nature", "자연"], ["object", "소품"]];
+  function renderTabs(box, tabs, cur, onSel) { box.replaceChildren(...tabs.map(([k, l]) => h("button", { type: "button", class: "chip", "aria-pressed": String(k === cur), onclick: () => onSel(k) }, l))); }
+  function renderPicker(box, filterFn, selected, onSel) {
+    const n = state.books.length; box.replaceChildren();
+    ORDER.filter((t) => filterFn(ITEMS[t])).forEach((type) => {
+      const it = ITEMS[type], ok = isUnlocked(type, n);
+      box.append(h("button", { type: "button", class: "pick", "aria-pressed": String(type === selected), disabled: !ok, title: ok ? it.name : it.unlock + "권 읽으면 열려요",
+        onclick: () => onSel(type) }, miniCanvas(type, 54, !ok), h("span", null, it.name), ok ? null : h("span", { class: "lock" }, it.unlock + "권부터")));
+    });
+  }
+  function renderModal() {
+    const m = state.modal; if (!m) return;
+    if (m.kind === "plant") {
+      renderTabs($("#m-tabs"), PLANT_TABS, state.modalTab, (k) => { state.modalTab = k; renderModal(); });
+      renderPicker($("#m-pick"), (it) => it.kind === state.modalTab, state.modalPick, (t) => { state.modalPick = t; renderModal(); });
+    } else {
+      renderTabs($("#m-tabs"), DECO_TABS, state.modalTab, (k) => { state.modalTab = k; renderModal(); });
+      renderPicker($("#m-pick"), (it) => it.kind === "deco" && it.cat === state.modalTab, state.modalPick, (t) => { state.modalPick = t; renderModal(); });
+    }
+  }
+  function openPlant(bookId) {
+    const b = state.books.find((x) => x.id === bookId); if (!b) return;
+    state.modal = { kind: "plant", bookId }; state.modalPick = b.plant && ITEMS[b.plant.type] && ITEMS[b.plant.type].kind !== "deco" ? b.plant.type : "round"; state.modalTab = ITEMS[state.modalPick].kind;
+    $("#m-title").textContent = "『" + b.title + "』 다 읽은 기념으로 무엇을 심을까요?";
+    $("#m-note").textContent = "나무나 동물을 하나 골라요. 심은 뒤에는 ‘숲 꾸미기’로 자리를 옮길 수 있어요.";
+    $("#m-ok").textContent = b.plant ? "바꾸기" : "심기"; renderModal(); $("#modal").hidden = false; $("#m-ok").focus();
+  }
+  function openDeco() {
+    state.modal = { kind: "deco" }; state.modalTab = "flower"; state.modalPick = "rose";
+    $("#m-title").textContent = "숲에 무엇을 놓을까요?";
+    $("#m-note").textContent = "책 한 권, 구절 하나를 기록할 때마다 장식을 하나씩 얻어요. 지금 " + decoTickets() + "개를 더 놓을 수 있어요. 놓은 뒤에는 ‘숲 꾸미기’로 옮기거나 치울 수 있어요.";
+    $("#m-ok").textContent = "놓기"; renderModal(); $("#modal").hidden = false; $("#m-ok").focus();
+  }
+  function closeModal() { $("#modal").hidden = true; state.modal = null; }
+  $("#m-cancel").addEventListener("click", closeModal);
+  $("#modal").addEventListener("click", (e) => { if (e.target.id === "modal") closeModal(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#modal").hidden) closeModal(); });
+  $("#m-ok").addEventListener("click", async () => {
+    const m = state.modal, type = state.modalPick; if (!m || !ITEMS[type]) return; closeModal();
+    if (m.kind === "plant") {
+      const b = state.books.find((x) => x.id === m.bookId); if (!b) return;
+      const plant = b.plant ? { ...b.plant, type } : { type, ...freeSpot() };
+      if (await run(() => backend.update(m.bookId, { plant }))) { markNew(m.bookId); state.selected = m.bookId; toast(plantMsg(type)); renderAll(); }
+    } else {
+      if (decoTickets() <= 0) { toast("놓을 수 있는 장식을 다 썼어요. 책이나 좋았던 구절을 기록하면 하나씩 생겨요."); return; }
+      let id = null; if (await run(async () => { id = await backend.addDeco({ type, ...freeSpot(), createdAt: Date.now() }); })) { markNew(id); state.selected = id; toast(josa(ITEMS[type].name, "을", "를") + " 숲에 놓았어요."); renderAll(); }
+    }
+  });
+  $("#f-seeds").addEventListener("click", () => { const u = unplanted(); if (u.length) openPlant(u[0].id); });
+  $("#f-deco").addEventListener("click", () => { if (decoTickets() <= 0) { toast("책이나 좋았던 구절을 기록하면 꽃·장식이 하나씩 생겨요."); return; } openDeco(); });
+  $("#f-empty-go").addEventListener("click", () => go("write"));
+  function plantMsg(type) { const it = ITEMS[type]; return it.kind === "animal" ? josa(it.name, "이", "가") + " 숲에 놀러 왔어요." : josa(it.name, "을", "를") + " 숲에 심었어요."; }
+  function markNew(id) { state.justAdded = id; state.justAddedAt = performance.now(); }
+
+  /* ---------- render ---------- */
+  function stars(r) { return "★".repeat(r) + "☆".repeat(5 - r); }
+  function fmtDate(s) { if (!s) return ""; const [y, m, d] = s.split("-"); return y + "." + m + "." + d; }
+  function allQuotes() { const out = []; state.books.slice().sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0)).forEach((b) => (b.quotes || []).forEach((q) => out.push({ ...q, book: b }))); return out; }
+
+  function renderBgStrip() {
+    const box = $("#bgstrip"); box.replaceChildren(h("span", { class: "lbl" }, "배경"));
+    Object.entries(BGS).forEach(([k, B]) => box.append(h("button", { type: "button", class: "sw", "aria-pressed": String(k === state.bg),
+      onclick: () => { if (backend) run(() => backend.setBg(k)); else { state.bg = k; renderAll(); } } },
+      h("i", { style: "background: linear-gradient(180deg, " + B.sky[0] + " 0 48%, " + B.ground[0] + " 48% 100%);" }), B.name)));
+  }
+  const GSLOT = { "소설": 1, "시": 2, "에세이": 3, "인문": 4, "역사": 5, "과학": 6, "경제경영": 7, "자기계발": 8 };
+  function renderGenreTile() {
+    const box = $("#genre-bars"); box.replaceChildren();
+    const total = state.books.length;
+    if (!total) { box.append(h("p", { class: "note" }, "책을 기록할 때 분야를 고르면 어떤 분야를 많이 읽었는지 여기에서 보여요.")); return; }
+    const counts = {}; let other = 0, none = 0;
+    state.books.forEach((b) => { if (!b.genre) none++; else if (GSLOT[b.genre]) counts[b.genre] = (counts[b.genre] || 0) + 1; else other++; });
+    const segs = Object.keys(GSLOT).filter((g) => counts[g]).map((g) => ({ name: g, n: counts[g], color: "var(--s" + GSLOT[g] + ")" }));
+    if (other) segs.push({ name: "그 외", n: other, color: "var(--s-other)" });
+    if (none) segs.push({ name: "분야 미정", n: none, none: true });
+    const ranked = segs.filter((x) => !x.none).sort((a, b) => b.n - a.n), top = ranked[0], pct = (n) => Math.round((n / total) * 100);
+    const otherNames = [...new Set(state.books.filter((b) => b.genre && !GSLOT[b.genre]).map((b) => b.genre))].join(", ");
+    box.append(top ? h("div", { class: "g-head" }, h("span", { class: "sub" }, "가장 많이 읽은 분야"), h("b", null, top.name), h("span", { class: "sub" }, top.n + "권 · " + pct(top.n) + "%" + (ranked[1] && ranked[1].n === top.n ? " (" + ranked.filter((x) => x.n === top.n).map((x) => x.name).join(", ") + " 공동)" : "")))
+      : h("div", { class: "g-head" }, h("span", { class: "sub" }, "아직 분야를 정한 책이 없어요.")));
+    box.append(h("div", { class: "stack", role: "img", "aria-label": segs.map((x) => x.name + " " + x.n + "권").join(", ") },
+      segs.map((x) => h("i", { class: x.none ? "none" : "", style: "flex:" + x.n + " 1 0; background:" + (x.color || "transparent"), title: (x.name === "그 외" ? "그 외 (" + otherNames + ")" : x.name) + " · " + x.n + "권 · " + pct(x.n) + "%" }))));
+    box.append(h("ul", { class: "legend" }, segs.map((x) => h("li", { class: top && x.name === top.name ? "top" : "", title: x.name === "그 외" ? otherNames : null },
+      h("i", { class: "dot" + (x.none ? " none" : ""), style: x.none ? "" : "background:" + x.color }), h("span", null, x.name), h("em", null, x.n + "권 · " + pct(x.n) + "%")))));
+    if (none) box.append(h("p", { class: "note" }, "분야를 정하지 않은 책이 " + none + "권 있어요. 아래 책장에서 ‘분야’를 눌러 정할 수 있어요."));
+  }
+  function renderNews() {
+    const gs = ["전체", ...GENRES.filter((g) => RECENT.some((r) => r.g === g))];
+    $("#news-chips").replaceChildren(...gs.map((g) => h("button", { type: "button", class: "chip", "aria-pressed": String(g === state.newsGenre), onclick: () => { state.newsGenre = g; renderNews(); } },
+      g, h("small", null, g === "전체" ? RECENT.length : RECENT.filter((r) => r.g === g).length))));
+    const list = RECENT.filter((r) => state.newsGenre === "전체" || r.g === state.newsGenre);
+    const mine = new Set(state.books.map((b) => b.title.replace(/\s/g, "")));
+    $("#news-list").replaceChildren(...list.map((r) => h("article", { class: "nb" },
+      h("div", null, h("span", { class: "gtag" }, r.g)), h("h3", null, r.t), h("span", { class: "sub" }, r.a + (r.p ? " · " + r.p : "")),
+      r.note ? h("p", null, r.note) : null, h("span", { class: "src" }, r.src), aggBadge(r.t),
+      h("div", { class: "acts" },
+        mine.has(r.t.replace(/\s/g, "")) ? h("span", { class: "gtag" }, "내 책장에 있어요") :
+          h("button", { type: "button", class: "btn popb", onclick: () => prefill(r) }, "다 읽었어요"),
+        h("button", { type: "button", class: "btn", onclick: () => openReview({ title: r.t, author: r.a, genre: r.g }) }, "평가"),
+        libLink(r.t, false),
+        h("a", { class: "btn ghost", href: "https://search.kyobobook.co.kr/search?keyword=" + encodeURIComponent(r.t), target: "_blank", rel: "noopener" }, "교보문고 ↗")))));
+  }
+  function prefill(r) {
+    $("#f-title").value = r.t; $("#f-author").value = r.a; state.formGenre = r.g; renderFormGenre();
+    go("write"); setTimeout(() => { const q = document.querySelector("#f-quotes textarea"); if (q) q.focus({ preventScroll: true }); }, 300);
+    toast("『" + r.t + "』를 기록 칸에 옮겼어요. 좋았던 구절을 적고 심을 것을 골라 주세요.");
+  }
+
+  function renderAll() {
+    readTheme();
+    const n = state.books.length, q = quoteCount(), pn = planted().length, loading = state.mode === "loading";
+    $("#f-submit").disabled = !backend || loading;
+    $("#mode-note").textContent = state.mode === "db" ? "기록은 내 계정에만 저장돼요. 다른 사람에게는 보이지 않아요." : state.mode === "local" ? "기록은 지금 쓰는 브라우저에만 저장돼요." : "";
+    const li = levelOf(pn), nextL = LEVELS[li + 1];
+    $("#f-level").textContent = loading ? "불러오는 중" : "Lv." + (li + 1) + " " + LEVELS[li][1] + " · 식구 " + pn + " · 장식 " + state.decos.length;
+    $("#f-empty").hidden = loading || pn > 0 || state.decos.length > 0;
+    const u = unplanted().length; $("#f-seeds").hidden = loading || !u; $("#f-seeds").textContent = "심을 씨앗 " + u + "개";
+    const dt = decoTickets(); $("#f-deco").hidden = loading; $("#f-deco").textContent = dt ? "+ 꽃·장식 놓기 · " + dt + "개" : "꽃·장식 0개";
+    $("#f-deco").classList.toggle("solid", dt > 0); $("#f-deco").title = dt ? "읽은 책과 구절로 얻은 장식을 놓아요" : "책이나 좋았던 구절을 기록하면 장식이 하나씩 생겨요";
+    $("#scene").setAttribute("aria-label", "나만의 숲: " + LEVELS[li][1] + ", 배경 " + BGS[state.bg].name + ", 나무와 동물 " + pn + "개, 장식 " + state.decos.length + "개");
+
+    $("#m-count").textContent = n;
+    $("#motto-s").textContent = n ? n + "권, " + q + "개의 구절이 쌓였어요. 오늘도 한 쪽씩." : "한 쪽씩, 한 권씩. 오늘 읽은 만큼 숲이 자라요.";
+    const y = String(new Date().getFullYear());
+    $("#s-books").replaceChildren(String(n), h("small", null, "권"));
+    renderGoal(state.books.filter((b) => (b.finishedAt || "").startsWith(y)).length, y);
+    $("#s-quotes").replaceChildren(String(q), h("small", null, "개"));
+    $("#s-level").textContent = LEVELS[li][1];
+    if (nextL) { const lo = LEVELS[li][0]; $("#s-bar").style.width = Math.round(((pn - lo) / (nextL[0] - lo)) * 100) + "%"; $("#s-next").textContent = "‘" + nextL[1] + "’까지 " + (nextL[0] - pn) + "개 더 심기"; }
+    else { $("#s-bar").style.width = "100%"; $("#s-next").textContent = "가장 깊은 숲이 됐어요."; }
+    const nextU = ORDER.filter((t) => (ITEMS[t].unlock || 0) > n).sort((a, b) => ITEMS[a].unlock - ITEMS[b].unlock)[0];
+    if (nextU) { paintMini($("#s-unlock-c"), nextU, false); $("#s-unlock").textContent = ITEMS[nextU].name; $("#s-unlock-sub").textContent = (ITEMS[nextU].unlock - n) + "권 더 읽으면 와요"; }
+    else { paintMini($("#s-unlock-c"), "panda", false); $("#s-unlock").textContent = "모두 모였어요"; $("#s-unlock-sub").textContent = "숲 친구를 전부 만났어요."; }
+
+    $("#f-share-row").hidden = !(backend && backend.saveReview);
+    renderReviewsView(); renderBgStrip(); renderGenreTile(); renderReco(); renderSpot(); renderNews(); renderShelf(); renderFormPicker(); renderRating(); renderFormGenre(); showInfo();
+    if (state.modal) renderModal();
+    if (reduce) draw(0);
+  }
+  function renderSpot() {
+    const qs = allQuotes();
+    if (!qs.length) { $("#spot-text").textContent = "구절을 저장하면 여기에서 다시 만날 수 있어요."; $("#spot-cite").textContent = ""; $("#spot-next").hidden = true; return; }
+    const q = qs[state.spotIdx % qs.length];
+    $("#spot-text").textContent = "“" + q.text + "”";
+    $("#spot-cite").textContent = "『" + q.book.title + "』" + (q.book.author ? " · " + q.book.author : "") + (q.page ? " · " + q.page + "쪽" : "");
+    $("#spot-next").hidden = qs.length < 2;
+  }
+  function renderShelf() {
+    const box = $("#books"); box.replaceChildren();
+    const present = GENRES.filter((g) => state.books.some((b) => b.genre === g)), hasNone = state.books.some((b) => !b.genre);
+    const chips = ["전체", ...present, ...(hasNone ? ["미분류"] : [])];
+    if (!chips.includes(state.shelfGenre)) state.shelfGenre = "전체";
+    $("#shelf-chips").replaceChildren(...(chips.length > 1 ? chips.map((g) => h("button", { type: "button", class: "chip", "aria-pressed": String(g === state.shelfGenre), onclick: () => { state.shelfGenre = g; renderShelf(); } },
+      g, h("small", null, g === "전체" ? state.books.length : state.books.filter((b) => (b.genre || "미분류") === g).length))) : []));
+    if (state.mode === "loading") { box.append(h("p", { class: "empty" }, "책장을 불러오는 중이에요.")); return; }
+    if (!state.books.length) { box.append(h("p", { class: "empty" }, "아직 꽂힌 책이 없어요. 다 읽은 책을 기록하면 여기에 쌓여요.")); return; }
+    const term = state.search.trim().toLowerCase();
+    let list = [...state.books].sort((a, b) => (b.finishedAt || "").localeCompare(a.finishedAt || "") || (b.createdAt || 0) - (a.createdAt || 0));
+    if (state.shelfGenre !== "전체") list = list.filter((b) => (b.genre || "미분류") === state.shelfGenre);
+    if (term) list = list.filter((b) => [b.title, b.author, ...(b.quotes || []).map((x) => x.text)].join(" ").toLowerCase().includes(term));
+    if (!list.length) { box.append(h("p", { class: "empty" }, "조건에 맞는 기록이 없어요.")); return; }
+    for (const b of list) {
+      const quotes = b.quotes || [], has = b.plant && ITEMS[b.plant.type];
+      const icon = has ? miniCanvas(b.plant.type, 46, false) : h("div", { class: "seed" }, "씨앗");
+      const head = h("div", { class: "bhead" }, icon, h("div", null, h("h3", null, b.title),
+        h("div", { class: "meta" }, b.genre ? h("span", { class: "gtag" }, b.genre) : null, b.author ? h("span", null, b.author) : null, b.finishedAt ? h("span", null, fmtDate(b.finishedAt) + " 완독") : null,
+          b.rating ? h("span", { class: "st", "aria-label": "내 별점 " + b.rating + "점" }, stars(b.rating)) : null, aggBadge(b.title)), b.review ? h("p", { class: "note", style: "font-size:13px; color: var(--ink)" }, "“" + b.review + "”") : null));
+      const ql = quotes.length ? h("ul", { class: "quotes" }, quotes.map((q, i) => h("li", null,
+        h("p", null, q.text, q.page ? h("small", null, "  · " + q.page + "쪽") : null),
+        h("button", { type: "button", class: "btn ghost", "aria-label": "이 구절 지우기", onclick: () => run(() => backend.update(b.id, { quotes: quotes.filter((_, k) => k !== i) })) }, "지우기")))) : null;
+      const acts = h("div", { class: "acts" });
+      if (state.confirmDel === b.id) {
+        acts.append(h("span", { class: "note" }, "이 책과 숲의 " + (has ? ITEMS[b.plant.type].name : "씨앗") + "까지 지울까요?"),
+          h("button", { type: "button", class: "btn danger solid", onclick: async () => { state.confirmDel = null; if (state.selected === b.id) state.selected = null; if (await run(() => backend.remove(b.id))) toast("책장에서 뺐어요."); renderAll(); } }, "지우기"),
+          h("button", { type: "button", class: "btn", onclick: () => { state.confirmDel = null; renderShelf(); } }, "취소"));
+      } else {
+        if (!has) acts.append(h("button", { type: "button", class: "btn popb", onclick: () => openPlant(b.id) }, "숲에 심기"));
+        else acts.append(h("button", { type: "button", class: "btn", onclick: () => { state.selected = b.id; showInfo(); go("home"); } }, "숲에서 보기"));
+        acts.append(h("button", { type: "button", class: "btn" + (isReco(b) ? " popb" : ""), "aria-pressed": String(isReco(b)), title: "‘내가 추천하는 책’에 올리기",
+          onclick: async () => { const nv = !isReco(b); if (await run(() => backend.update(b.id, { recommend: nv }))) toast(nv ? "『" + b.title + "』를 추천 도서에 올렸어요." : "추천 도서에서 뺐어요."); } }, isReco(b) ? "★ 추천 중" : "추천"));
+        if (isReco(b)) acts.append(h("button", { type: "button", class: "btn", "aria-expanded": String(state.openWhy === b.id), onclick: () => { state.openWhy = state.openWhy === b.id ? null : b.id; renderShelf(); const t = document.getElementById("why-" + b.id); if (t) t.focus(); } }, b.why ? "추천 이유 고치기" : "추천 이유 쓰기"));
+        acts.append(h("button", { type: "button", class: "btn", onclick: () => openReview(b) }, "평가"));
+        acts.append(h("button", { type: "button", class: "btn" + (b.genre ? "" : " popb"), "aria-expanded": String(state.openGenre === b.id), onclick: () => { state.openGenre = state.openGenre === b.id ? null : b.id; renderShelf(); } }, b.genre ? "분야" : "분야 정하기"));
+        acts.append(h("button", { type: "button", class: "btn", "aria-expanded": String(state.openAdd === b.id), onclick: () => { state.openAdd = state.openAdd === b.id ? null : b.id; renderShelf(); const t = document.getElementById("aq-" + b.id); if (t) t.focus(); } }, "구절 추가"),
+          h("button", { type: "button", class: "btn ghost danger", onclick: () => { state.confirmDel = b.id; renderShelf(); } }, "책 지우기"));
+      }
+      let addq = null;
+      if (state.openAdd === b.id) {
+        const ta = h("textarea", { id: "aq-" + b.id, placeholder: "마음에 남은 문장을 옮겨 적어 보세요", "aria-label": "추가할 구절" });
+        const pg = h("input", { type: "number", min: "1", id: "aqp-" + b.id, placeholder: "쪽", "aria-label": "쪽수" });
+        addq = h("div", { class: "addq" }, h("div", { class: "qrow" }, ta, pg), h("div", { class: "acts" },
+          h("button", { type: "button", class: "btn primary", onclick: async () => {
+            const text = ta.value.trim(); if (!text) { ta.focus(); return; }
+            const item = { text }; if (pg.value) item.page = Number(pg.value);
+            if (await run(() => backend.update(b.id, { quotes: [...quotes, item] }))) { state.openAdd = null; markNew(b.id); toast((has ? ITEMS[b.plant.type].name + " 곁에 꽃이 피었어요." : "구절을 저장했어요.")); renderAll(); }
+          } }, "구절 저장"),
+          h("button", { type: "button", class: "btn ghost", onclick: () => { state.openAdd = null; renderShelf(); } }, "닫기")));
+      }
+      const gpick = state.openGenre === b.id ? h("div", { class: "gpick", role: "group", "aria-label": "분야 고르기" }, GENRES.map((g) => h("button", { type: "button", class: "chip", "aria-pressed": String(g === b.genre),
+        onclick: async () => { state.openGenre = null; if (await run(() => backend.update(b.id, { genre: g === b.genre ? "" : g }))) toast(g === b.genre ? "분야를 비웠어요." : "『" + b.title + "』의 분야를 ‘" + g + "’로 정했어요."); renderAll(); } }, g))) : null;
+      let whyEd = null;
+      if (state.openWhy === b.id) {
+        const ta = h("textarea", { id: "why-" + b.id, rows: "3", maxlength: "500", placeholder: "이 책을 왜 추천하나요? 다른 사람이 읽고 싶어지도록 적어 보세요.", "aria-label": "추천 이유" }); ta.value = b.why || "";
+        whyEd = h("div", { class: "addq" }, ta, h("div", { class: "acts" },
+          h("button", { type: "button", class: "btn primary", onclick: async () => { const v = ta.value.trim().slice(0, 500); if (await run(() => backend.update(b.id, { why: v }))) { state.openWhy = null; toast(v ? "추천 이유를 저장했어요." : "추천 이유를 비웠어요."); renderAll(); } } }, "저장"),
+          h("button", { type: "button", class: "btn ghost", onclick: () => { state.openWhy = null; renderShelf(); } }, "닫기")));
+      }
+      const whyView = b.why && state.openWhy !== b.id ? h("div", { class: "why-box" }, h("span", { class: "lbl" }, "추천하는 이유"), h("p", null, b.why)) : null;
+      box.append(h("article", { class: "book" }, head, whyView, ql, addq, whyEd, gpick, acts));
+    }
+  }
+
+  /* ---------- form ---------- */
+  let qSeq = 0;
+  function addQuoteRow() {
+    const k = qSeq++;
+    $("#f-quotes").append(h("div", { class: "qrow" },
+      h("textarea", { id: "f-q" + k, class: "q-text", placeholder: "좋았던 문장을 그대로 옮겨 적어요", "aria-label": "좋았던 구절" }),
+      h("input", { type: "number", min: "1", id: "f-qp" + k, class: "q-page", placeholder: "쪽", "aria-label": "쪽수" })));
+  }
+  function renderRating() {
+    const box = $("#f-rating"); box.replaceChildren();
+    for (let i = 1; i <= 5; i++) box.append(h("button", { type: "button", class: i <= state.formRating ? "on" : "", "aria-label": i + "점", "aria-pressed": String(i === state.formRating),
+      onclick: () => { state.formRating = state.formRating === i ? 0 : i; renderRating(); } }, "★"));
+  }
+  function renderFormGenre() { $("#f-genre").replaceChildren(...GENRES.map((g) => h("button", { type: "button", class: "chip", "aria-pressed": String(g === state.formGenre), onclick: () => { state.formGenre = state.formGenre === g ? "" : g; renderFormGenre(); } }, g))); }
+  function renderFormPicker() {
+    if (!isUnlocked(state.formPick, state.books.length)) state.formPick = "round";
+    renderTabs($("#f-pick-tabs"), PLANT_TABS, state.formTab, (k) => { state.formTab = k; renderFormPicker(); });
+    renderPicker($("#f-pick"), (it) => it.kind === state.formTab, state.formPick, (t) => { state.formPick = t; renderFormPicker(); });
+  }
+  function resetForm() { $("#f-title").value = ""; $("#f-author").value = ""; $("#f-date").value = todayStr(); $("#f-quotes").replaceChildren(); addQuoteRow(); state.formRating = 0; state.formGenre = ""; $("#f-review").value = ""; }
+  $("#f-addq").addEventListener("click", () => { addQuoteRow(); $("#f-quotes").lastElementChild.querySelector("textarea").focus(); });
+  $("#record").addEventListener("submit", async (e) => {
+    e.preventDefault(); if (!backend) return;
+    const title = $("#f-title").value.trim(); if (!title) { $("#f-title").focus(); return; }
+    const quotes = [...document.querySelectorAll("#f-quotes .qrow")].map((r) => { const text = r.querySelector(".q-text").value.trim(), p = r.querySelector(".q-page").value; if (!text) return null; const o = { text }; if (p) o.page = Number(p); return o; }).filter(Boolean);
+    const type = isUnlocked(state.formPick, state.books.length) ? state.formPick : "round";
+    const reviewText = $("#f-review").value.trim().slice(0, 300), share = $("#f-share").checked;
+    const book = { title, review: reviewText, author: $("#f-author").value.trim(), genre: state.formGenre, finishedAt: $("#f-date").value || todayStr(), rating: state.formRating, quotes, createdAt: Date.now(), plant: { type, ...freeSpot() } };
+    const sb = $("#f-submit").getBoundingClientRect(), before = yearCount();
+    $("#f-submit").disabled = true; let id = null;
+    const ok = await run(async () => { id = await backend.add(book); });
+    $("#f-submit").disabled = false;
+    if (ok) {
+      const after = state.books.length, newly = ORDER.filter((t) => ITEMS[t].unlock === after);
+      if (share && backend.saveReview && book.rating > 0) run(() => backend.saveReview(bookKey(title), { title, author: book.author, genre: book.genre, rating: book.rating, text: reviewText, at: Date.now() }));
+      else if (share && backend.saveReview && reviewText) setTimeout(() => toast("모두의 평가에 올리려면 별점이 필요해요. 책장에서 ‘평가’를 눌러 남길 수 있어요."), 3200);
+      markNew(id); state.selected = id; setStatus(""); resetForm(); renderAll();
+      toast("『" + title + "』 덕분에 " + plantMsg(type) + (newly.length ? " 새 친구도 열렸어요: " + newly.map((t) => ITEMS[t].name).join(", ") : ""));
+      confetti(sb.left + sb.width / 2, sb.top + sb.height / 2);
+      const yAfter = yearCount(); if (before < state.goal && yAfter >= state.goal) setTimeout(() => toast("올해 목표 " + state.goal + "권을 채웠어요! 꾸준함이 숲을 바꿨어요."), 1400);
+      setTimeout(() => go("home"), reduce ? 0 : 1300);
+    }
+  });
+  $("#search").addEventListener("input", (e) => { state.search = e.target.value; renderShelf(); });
+  $("#spot-next").addEventListener("click", () => { const n = allQuotes().length; if (n > 1) { state.spotIdx = (state.spotIdx + 1 + Math.floor(Math.random() * (n - 1))) % n; renderSpot(); } });
+
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => renderAll());
+  new MutationObserver(() => renderAll()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  /* ---------- reviews ---------- */
+  const normTitle = (t) => String(t || "").replace(/[\s\p{P}\p{S}]/gu, "").toLowerCase();
+  const bookKey = (t) => "k" + hash(normTitle(t)).toString(36);
+  function allReviews() {
+    const map = {};
+    for (const [uid, items] of Object.entries(state.reviewDocs)) for (const [k, r] of Object.entries(items || {})) {
+      const rating = Number(r && r.rating); if (!(rating >= 1 && rating <= 5)) continue;
+      const m = map[k] || (map[k] = { key: k, title: String(r.title || "제목 없음").slice(0, 120), author: String(r.author || "").slice(0, 80), genre: String(r.genre || "").slice(0, 20), list: [] });
+      m.list.push({ uid, rating: Math.round(rating), text: String(r.text || "").slice(0, 300), at: Number(r.at) || 0 });
+    }
+    Object.values(map).forEach((m) => { m.avg = m.list.reduce((s, x) => s + x.rating, 0) / m.list.length; m.last = Math.max(...m.list.map((x) => x.at)); m.list.sort((a, b) => b.at - a.at); });
+    return map;
+  }
+  const aggFor = (title) => allReviews()[bookKey(title)];
+  function aggBadge(title) { const a = aggFor(title); return a ? h("span", { class: "rbadge", title: "모두의 평가" }, "★ " + a.avg.toFixed(1), h("small", null, " · " + a.list.length + "명")) : null; }
+  async function fillNames(root) {
+    const els = [...root.querySelectorAll("[data-uid]")]; if (!els.length) return;
+    let ps = {}; try { if (state.userNS && state.userNS.profiles) ps = await state.userNS.profiles([...new Set(els.map((e) => e.dataset.uid))]); } catch (e) {}
+    els.forEach((e) => { const id = e.dataset.uid; e.textContent = id === state.uid ? "나" : ((ps[id] && ps[id].name) || "익명 독자"); });
+  }
+  function starPicker(box, val, onChange) {
+    box.replaceChildren(); for (let i = 1; i <= 5; i++) box.append(h("button", { type: "button", class: i <= val ? "on" : "", "aria-label": i + "점", "aria-pressed": String(i === val), onclick: () => onChange(i) }, "★"));
+  }
+  function fmtAt(ms) { if (!ms) return ""; const d = new Date(ms); return d.getFullYear() + "." + String(d.getMonth() + 1).padStart(2, "0") + "." + String(d.getDate()).padStart(2, "0"); }
+  function openReview(info) {
+    state.rv = { title: info.title, author: info.author || "", genre: info.genre || "" };
+    const key = bookKey(info.title), mine = (state.reviewDocs[state.uid] || {})[key];
+    const myBook = state.books.find((b) => normTitle(b.title) === normTitle(info.title));
+    state.rvRating = mine ? Math.round(mine.rating) : (myBook && myBook.rating) || 0;
+    $("#r-title").textContent = info.title; $("#r-sub").replaceChildren([info.author, info.genre].filter(Boolean).join(" · "), " ", libLink(info.title, true));
+    renderReviewModal();
+    const box = $("#r-mine"); box.replaceChildren();
+    if (!backend || !backend.saveReview) { box.append(h("p", { class: "note" }, "claude.ai에 로그인한 상태로 이 페이지를 열면 평가를 남기고 다른 사람의 평가를 볼 수 있어요.")); }
+    else {
+      const starBox = h("div", { class: "stars", role: "group", "aria-label": "내 별점" });
+      const drawStars = () => starPicker(starBox, state.rvRating, (i) => { state.rvRating = i; drawStars(); }); drawStars();
+      const ta = h("textarea", { id: "r-text", rows: "3", maxlength: "300", placeholder: "다른 사람이 이 책을 고를 때 도움이 될 한마디를 남겨 주세요", "aria-label": "한줄평" });
+      ta.value = mine ? mine.text || "" : (myBook && myBook.review) || "";
+      const acts = h("div", { class: "acts" }, h("button", { type: "button", class: "btn primary", onclick: async () => {
+        if (!state.rvRating) { toast("별점을 골라 주세요."); return; }
+        if (await run(() => backend.saveReview(key, { title: state.rv.title, author: state.rv.author, genre: state.rv.genre, rating: state.rvRating, text: ta.value.trim().slice(0, 300), at: Date.now() }))) { toast("평가를 올렸어요. 고마워요!"); openReview(state.rv); }
+      } }, mine ? "평가 고치기" : "평가 올리기"));
+      if (mine) acts.append(h("button", { type: "button", class: "btn ghost danger", onclick: async () => { if (await run(() => backend.deleteReview(key))) { toast("내 평가를 지웠어요."); openReview(state.rv); } } }, "내 평가 지우기"));
+      box.append(h("h3", null, mine ? "내 평가" : "나도 평가하기"), starBox, ta, acts, h("p", { class: "note" }, "평가에는 내 이름이 함께 보여요."));
+    }
+    $("#rmodal").hidden = false; $("#r-close").focus();
+  }
+  function renderReviewModal() {
+    if (!state.rv) return;
+    const a = aggFor(state.rv.title), sum = $("#r-summary"), list = $("#r-list"); sum.replaceChildren(); list.replaceChildren();
+    if (!state.reviewsReady) { sum.append(h("p", { class: "note" }, "평가를 불러오는 중이에요.")); return; }
+    if (!a) { sum.append(h("p", { class: "empty" }, "아직 남겨진 평가가 없어요. 첫 평가를 남겨 보세요.")); return; }
+    const dist = [5, 4, 3, 2, 1].map((s2) => [s2, a.list.filter((x) => x.rating === s2).length]), mx = Math.max(...dist.map((d) => d[1]));
+    sum.append(h("div", { class: "r-sum" }, h("div", null, h("span", { class: "big" }, a.avg.toFixed(1)), h("div", { class: "meta" }, h("span", { class: "st" }, stars(Math.round(a.avg))), h("span", null, a.list.length + "명이 평가했어요"))),
+      h("div", { class: "genre-bars", style: "flex:1; min-width: 180px" }, dist.map(([s2, c]) => h("div", { class: "gb", title: s2 + "점 " + c + "명" }, h("span", null, s2 + "점"), h("div", { class: "track" }, c ? h("i", { style: "width:" + (c / mx) * 100 + "%" }) : null), h("b", null, c + "명"))))));
+    a.list.forEach((r) => list.append(h("div", { class: "rv" }, h("div", { class: "meta" }, h("b", { "data-uid": r.uid, style: "color: var(--ink)" }, "…"), h("span", { class: "st" }, stars(r.rating)), h("span", null, fmtAt(r.at))), r.text ? h("p", null, r.text) : null)));
+    fillNames(list);
+  }
+  function closeReview() { $("#rmodal").hidden = true; state.rv = null; }
+  $("#r-close").addEventListener("click", closeReview);
+  $("#rmodal").addEventListener("click", (e) => { if (e.target.id === "rmodal") closeReview(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#rmodal").hidden) closeReview(); });
+  function renderReviewsView() {
+    const sorts = [["count", "많이 평가된 순"], ["avg", "별점 높은 순"], ["recent", "최근 순"]];
+    $("#rv-sort").replaceChildren(...sorts.map(([k, l]) => h("button", { type: "button", class: "chip", "aria-pressed": String(k === state.rvSort), onclick: () => { state.rvSort = k; renderReviewsView(); } }, l)));
+    const note = $("#rv-note"), box = $("#rv-list"); box.replaceChildren();
+    if (!backend || !backend.saveReview) { note.hidden = false; note.textContent = state.mode === "loading" ? "불러오는 중이에요." : "claude.ai에 로그인한 상태로 이 페이지를 열면 다른 사람들의 평가를 볼 수 있어요."; return; }
+    note.hidden = true;
+    const term = state.rvSearch.trim().toLowerCase();
+    let list = Object.values(allReviews()); if (term) list = list.filter((m) => (m.title + " " + m.author).toLowerCase().includes(term));
+    list.sort((a, b) => state.rvSort === "avg" ? b.avg - a.avg || b.list.length - a.list.length : state.rvSort === "recent" ? b.last - a.last : b.list.length - a.list.length || b.avg - a.avg);
+    if (!list.length) { box.append(h("p", { class: "empty", style: "grid-column: 1 / -1" }, state.reviewsReady ? (term ? "찾는 책의 평가가 없어요." : "아직 평가가 없어요. 책을 기록할 때 별점과 한줄평을 올리면 여기에 모여요.") : "평가를 불러오는 중이에요.")); return; }
+    list.forEach((m) => { const top = m.list.find((x) => x.text);
+      box.append(h("article", { class: "nb" }, m.genre ? h("div", null, h("span", { class: "gtag" }, m.genre)) : null, h("h3", null, m.title), m.author ? h("span", { class: "sub" }, m.author) : null,
+        h("div", { class: "meta" }, h("span", { class: "st" }, stars(Math.round(m.avg))), h("b", { style: "color: var(--ink)" }, m.avg.toFixed(1)), h("span", null, m.list.length + "명")),
+        top ? h("p", null, "“" + top.text + "” ", h("span", { class: "sub", "data-uid": top.uid }, "…")) : null,
+        h("div", { class: "acts" }, h("button", { type: "button", class: "btn", onclick: () => openReview(m) }, "평가 모두 보기")))); });
+    fillNames(box);
+  }
+  $("#rv-search").addEventListener("input", (e) => { state.rvSearch = e.target.value; renderReviewsView(); });
+  function renderReviewsEverywhere() { renderReviewsView(); renderNews(); renderShelf(); renderReviewModal(); }
+
+  /* ---------- sound: generated music tracks + ambience (all made in the browser) ---------- */
+  const Sound = (() => {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    let ac = null, musicBus, ambBus, mDry, verb, lp, timer = null, next = 0, step = 0, lastNote = -1, track = null, amb = null, ambNodes = [], ambTimer = null, mVol = 0.55, aVol = 0.45, bufs = {};
+    const freq = (m) => 440 * Math.pow(2, (m - 69) / 12);
+    const TRACKS = {
+      musicbox: { name: "숲속 오르골", bpm: 66, chords: [[48, 55, 64, 71], [45, 52, 60, 67], [41, 48, 57, 64], [43, 50, 59, 62]], scale: [72, 74, 76, 79, 81, 84, 86, 88], dens: [0.75, 0.22, 0.4], voice: "bell", chirp: true },
+      piano:    { name: "잔잔한 피아노", bpm: 52, chords: [[45, 52, 57, 60, 64], [41, 48, 53, 57, 60], [48, 55, 60, 64, 67], [43, 50, 55, 59, 62]], scale: [69, 71, 72, 74, 76, 79, 81, 84], dens: [0.9, 0.14, 0.32], voice: "piano" },
+      lofi:     { name: "로파이", bpm: 76, chords: [[50, 53, 57, 60, 64], [43, 47, 50, 53, 57], [48, 52, 55, 59, 62], [45, 48, 52, 55, 59]], scale: [69, 72, 74, 76, 79, 81], dens: [0.5, 0.16, 0.3], voice: "keys", drums: true },
+      night:    { name: "별밤 패드", bpm: 44, chords: [[45, 52, 59, 64, 71], [41, 48, 55, 60, 69], [43, 50, 57, 62, 67], [40, 47, 55, 59, 66]], scale: [76, 79, 81, 83, 88], dens: [0.45, 0.06, 0.12], voice: "bell" },
+    };
+    const AMBS = { rain: "빗소리", stream: "시냇물", fire: "모닥불", wind: "숲속 바람", white: "백색소음", pink: "분홍소음", brown: "갈색소음" };
+    function noiseBuf(kind) {
+      if (bufs[kind]) return bufs[kind];
+      const len = ac.sampleRate * 3, b = ac.createBuffer(2, len, ac.sampleRate);
+      for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0, last = 0;
+        for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1;
+          if (kind === "white") d[i] = w * 0.5;
+          else if (kind === "pink") { b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759; b2 = 0.969 * b2 + w * 0.153852; b3 = 0.8665 * b3 + w * 0.3104856; b4 = 0.55 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.016898; d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11; b6 = w * 0.115926; }
+          else { last = (last + 0.02 * w) / 1.02; d[i] = last * 3.5; } } }
+      return (bufs[kind] = b);
+    }
+    function impulse(sec) { const len = Math.floor(ac.sampleRate * sec), b = ac.createBuffer(2, len, ac.sampleRate);
+      for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); } return b; }
+    function ensure() {
+      if (ac) return; ac = new AC();
+      lp = ac.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2800; lp.connect(ac.destination);
+      musicBus = ac.createGain(); musicBus.gain.value = 0; musicBus.connect(lp);
+      mDry = ac.createGain(); mDry.gain.value = 0.7; mDry.connect(musicBus);
+      verb = ac.createConvolver(); verb.buffer = impulse(3.2); const wet = ac.createGain(); wet.gain.value = 0.45; verb.connect(wet); wet.connect(musicBus);
+      ambBus = ac.createGain(); ambBus.gain.value = 0; ambBus.connect(ac.destination);
+    }
+    const out = (node) => { node.connect(mDry); node.connect(verb); };
+    function env(g, t, peak, a, d) { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0006, t + a + d); }
+    function osc(type, f, t, dur, g) { const o = ac.createOscillator(); o.type = type; o.frequency.value = f; o.connect(g); o.start(t); o.stop(t + dur); return o; }
+    function pad(notes, t, dur, soft) {
+      notes.forEach((m, i) => [-6, 6].forEach((det) => { const g = ac.createGain(), lvl = (i === 0 ? 0.045 : 0.02) * (soft || 1);
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(lvl, t + 1.8); g.gain.setValueAtTime(lvl, t + Math.max(1.9, dur - 1.2)); g.gain.linearRampToValueAtTime(0, t + dur + 1.4);
+        const o = osc(i === 0 ? "sine" : "triangle", freq(m), t, dur + 1.6, g); o.detune.value = det; out(g); }));
+    }
+    function voice(kind, m, t, v) {
+      const g = ac.createGain(); out(g);
+      if (kind === "bell") { env(g, t, v, 0.012, 2.2); osc("sine", freq(m), t, 2.3, g); const g2 = ac.createGain(); g2.gain.value = 0.18; g2.connect(g); osc("sine", freq(m) * 2.01, t, 2.3, g2); }
+      else if (kind === "piano") { env(g, t, v * 1.1, 0.006, 3.2); osc("triangle", freq(m), t, 3.3, g); const g2 = ac.createGain(); g2.connect(g); env(g2, t, 0.25, 0.004, 0.6); osc("sine", freq(m) * 2, t, 0.7, g2); }
+      else { env(g, t, v * 1.2, 0.01, 1.7); const o = osc("sine", freq(m), t, 1.8, g); const l = ac.createOscillator(), lg = ac.createGain(); l.frequency.value = 5; lg.gain.value = 9; l.connect(lg); lg.connect(o.detune); l.start(t); l.stop(t + 1.8);
+        const g2 = ac.createGain(); g2.gain.value = 0.12; g2.connect(g); osc("sine", freq(m) * 3, t, 1.8, g2); }
+    }
+    function noiseHit(t, dur, type, f, q, lvl, dest) { const src = ac.createBufferSource(); src.buffer = noiseBuf("white"); const fl = ac.createBiquadFilter(); fl.type = type; fl.frequency.value = f; fl.Q.value = q || 0.7;
+      const g = ac.createGain(); env(g, t, lvl, 0.002, dur); src.connect(fl); fl.connect(g); g.connect(dest || musicBus); src.start(t, Math.random() * 2); src.stop(t + dur + 0.05); }
+    function chirp(t) { const n = 2 + Math.floor(Math.random() * 3);
+      for (let k = 0; k < n; k++) { const g = ac.createGain(), s0 = t + k * 0.13, base = 2800 + Math.random() * 900, o = ac.createOscillator(); o.type = "sine";
+        o.frequency.setValueAtTime(base, s0); o.frequency.exponentialRampToValueAtTime(base * 1.35, s0 + 0.07); g.gain.setValueAtTime(0, s0); g.gain.linearRampToValueAtTime(0.012, s0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0005, s0 + 0.11);
+        o.connect(g); g.connect(verb); g.connect(musicBus); o.start(s0); o.stop(s0 + 0.13); } }
+    function tick() {
+      const T = TRACKS[track]; if (!T) return; const E = 60 / T.bpm / 2;
+      while (next < ac.currentTime + 0.4) {
+        const bar = Math.floor(step / 8), ib = step % 8, chord = T.chords[bar % T.chords.length];
+        if (ib === 0) { pad(chord, next, E * 8, T.drums ? 0.7 : 1); const g = ac.createGain(); g.gain.setValueAtTime(0, next); g.gain.linearRampToValueAtTime(0.05, next + 0.3); g.gain.exponentialRampToValueAtTime(0.001, next + E * 8); osc("sine", freq(chord[0] - 12), next, E * 8 + 0.1, g); out(g); }
+        const p = ib === 0 ? T.dens[0] : ib % 2 ? T.dens[1] : T.dens[2];
+        if (Math.random() < p) { const tones = T.scale.filter((m) => chord.some((c) => (m - c) % 12 === 0) || Math.random() < 0.45);
+          let m = tones[Math.floor(Math.random() * tones.length)] || T.scale[0]; if (m === lastNote) m = T.scale[(T.scale.indexOf(m) + 1) % T.scale.length]; lastNote = m;
+          voice(T.voice, m, next + (Math.random() - 0.5) * 0.02, 0.045 + Math.random() * 0.035); }
+        if (T.drums) { const sw = ib % 2 ? E * 0.18 : 0;
+          if (ib === 0 || ib === 5) { const g = ac.createGain(), o = ac.createOscillator(); o.frequency.setValueAtTime(110, next); o.frequency.exponentialRampToValueAtTime(42, next + 0.18); env(g, next, 0.22, 0.004, 0.26); o.connect(g); g.connect(musicBus); o.start(next); o.stop(next + 0.32); }
+          if (ib === 2 || ib === 6) noiseHit(next, 0.16, "bandpass", 1800, 0.9, 0.05);
+          noiseHit(next + sw, 0.035, "highpass", 7000, 0.7, ib % 2 ? 0.012 : 0.02);
+          if (Math.random() < 0.5) noiseHit(next + Math.random() * E, 0.004, "highpass", 3000, 0.7, 0.012); }
+        if (T.chirp && !isNight() && Math.random() < 0.025) chirp(next);
+        next += E; step++;
+      }
+    }
+    function fade(bus, to, sec) { const t = ac.currentTime; bus.gain.cancelScheduledValues(t); bus.gain.setValueAtTime(bus.gain.value, t); bus.gain.linearRampToValueAtTime(to, t + sec); }
+    function stopAmb() { clearInterval(ambTimer); ambTimer = null; const nodes = ambNodes; ambNodes = []; setTimeout(() => nodes.forEach((n) => { try { n.stop && n.stop(); } catch (e) {} try { n.disconnect(); } catch (e) {} }), 900); }
+    function loopNoise(kind, chain) { const src = ac.createBufferSource(); src.buffer = noiseBuf(kind); src.loop = true; let node = src; ambNodes.push(src);
+      chain.forEach((n) => { node.connect(n); node = n; ambNodes.push(n); }); node.connect(ambBus); src.start(); return src; }
+    const filt = (type, f, q) => { const n = ac.createBiquadFilter(); n.type = type; n.frequency.value = f; n.Q.value = q || 0.7; return n; };
+    const gainN = (v) => { const g = ac.createGain(); g.gain.value = v; return g; };
+    function lfo(rate, depth, param) { const l = ac.createOscillator(), g = ac.createGain(); l.frequency.value = rate; g.gain.value = depth; l.connect(g); g.connect(param); l.start(); ambNodes.push(l, g); }
+    function startAmb(kind) {
+      if (kind === "white") loopNoise("white", [gainN(0.22)]);
+      else if (kind === "pink") loopNoise("pink", [gainN(0.6)]);
+      else if (kind === "brown") loopNoise("brown", [filt("lowpass", 700), gainN(0.55)]);
+      else if (kind === "rain") { loopNoise("pink", [filt("highpass", 500), filt("lowpass", 7000), gainN(0.55)]);
+        ambTimer = setInterval(() => { const t = ac.currentTime; for (let i = 0; i < 4; i++) if (Math.random() < 0.55) noiseHit(t + Math.random() * 0.08, 0.02 + Math.random() * 0.03, "bandpass", 1500 + Math.random() * 3500, 2, 0.02 + Math.random() * 0.05, ambBus); }, 80); }
+      else if (kind === "stream") { const bp = filt("bandpass", 1000, 0.8), g = gainN(0.7); loopNoise("pink", [filt("highpass", 300), bp, g]); lfo(0.17, 380, bp.frequency); lfo(0.29, 0.18, g.gain);
+        const bp2 = filt("bandpass", 2200, 1.4), g2 = gainN(0.25); loopNoise("white", [bp2, g2]); lfo(0.41, 700, bp2.frequency); }
+      else if (kind === "fire") { const g = gainN(0.75); loopNoise("brown", [filt("lowpass", 420), g]); lfo(0.3, 0.2, g.gain);
+        ambTimer = setInterval(() => { const t = ac.currentTime; if (Math.random() < 0.45) noiseHit(t + Math.random() * 0.05, 0.008 + Math.random() * 0.025, "highpass", 1400 + Math.random() * 2000, 0.8, 0.05 + Math.random() * 0.12, ambBus);
+          if (Math.random() < 0.04) noiseHit(t, 0.06, "bandpass", 900, 1.2, 0.18, ambBus); }, 60); }
+      else if (kind === "wind") { const bp = filt("bandpass", 500, 0.6), g = gainN(0.6); loopNoise("pink", [bp, g]); lfo(0.07, 260, bp.frequency); lfo(0.11, 0.3, g.gain); }
+    }
+    let onChange = () => {};
+    const api = {
+      supported: !!AC, TRACKS, AMBS,
+      get track() { return track; }, get amb() { return amb; }, get playing() { return !!(track || amb); },
+      onChange(fn) { onChange = fn; },
+      async setTrack(id) { ensure(); try { await ac.resume(); } catch (e) {}
+        if (track) fade(musicBus, 0, 0.6);
+        const prev = track; track = TRACKS[id] ? id : null; clearInterval(timer); timer = null;
+        if (track) { setTimeout(() => { if (track !== id) return; next = ac.currentTime + 0.1; step = 0; tick(); timer = setInterval(tick, 120); fade(musicBus, mVol * 0.9, 2.2); }, prev ? 650 : 0); }
+        onChange(); },
+      async setAmb(id) { ensure(); try { await ac.resume(); } catch (e) {}
+        if (amb) { fade(ambBus, 0, 0.8); stopAmb(); }
+        const prev = amb; amb = AMBS[id] ? id : null;
+        if (amb) setTimeout(() => { if (amb !== id) return; startAmb(id); fade(ambBus, aVol, 1.8); }, prev ? 850 : 0);
+        onChange(); },
+      off() { if (!ac) return; this.setTrack(null); this.setAmb(null); },
+      setMusicVol(v) { mVol = v; if (ac && track) fade(musicBus, v * 0.9, 0.15); },
+      setAmbVol(v) { aVol = v; if (ac && amb) fade(ambBus, v, 0.15); },
+    };
+    document.addEventListener("visibilitychange", () => { if (!ac || !api.playing) return;
+      if (document.hidden) { clearInterval(timer); timer = null; ac.suspend().catch(() => {}); }
+      else ac.resume().then(() => { if (track) { next = ac.currentTime + 0.1; clearInterval(timer); timer = setInterval(tick, 120); } }).catch(() => {}); });
+    return api;
+  })();
+  function renderSound() {
+    const btn = $("#bgm-btn"), names = [Sound.track && Sound.TRACKS[Sound.track].name, Sound.amb && Sound.AMBS[Sound.amb]].filter(Boolean);
+    btn.setAttribute("aria-pressed", String(Sound.playing)); $("#bgm-label").textContent = names.length ? names.join(" + ") : "소리 켜기";
+    $("#bgm-tracks").replaceChildren(...[["", "끄기"], ...Object.entries(Sound.TRACKS).map(([k, v]) => [k, v.name])].map(([k, l]) => h("button", { type: "button", class: "chip", "aria-pressed": String((Sound.track || "") === k), onclick: () => Sound.setTrack(k || null) }, l)));
+    $("#bgm-ambs").replaceChildren(...[["", "끄기"], ...Object.entries(Sound.AMBS)].map(([k, l]) => h("button", { type: "button", class: "chip", "aria-pressed": String((Sound.amb || "") === k), onclick: () => Sound.setAmb(k || null) }, l)));
+  }
+  Sound.onChange(renderSound);
+  if (!Sound.supported) $("#bgm-btn").hidden = true; else renderSound();
+  function togglePanel(open) { const pnl = $("#bgm-panel"), o = open == null ? pnl.hidden : open; pnl.hidden = !o; $("#bgm-btn").setAttribute("aria-expanded", String(o)); }
+  $("#bgm-btn").addEventListener("click", () => { const first = !Sound.playing && $("#bgm-panel").hidden; togglePanel(); if (first) Sound.setTrack("musicbox"); });
+  $("#bgm-off").addEventListener("click", () => { Sound.off(); togglePanel(false); });
+  $("#bgm-mvol").addEventListener("input", (e) => Sound.setMusicVol(Number(e.target.value) / 100));
+  $("#bgm-avol").addEventListener("input", (e) => Sound.setAmbVol(Number(e.target.value) / 100));
+  document.addEventListener("click", (e) => { if (!$("#bgm-panel").hidden && !e.target.closest(".bgm")) togglePanel(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#bgm-panel").hidden) { togglePanel(false); $("#bgm-btn").focus(); } });
+
+  /* ---------- Daegu University library (title copied, library opens) ---------- */
+  const LIB_HOME = "https://lib.daegu.ac.kr";
+  function libLink(title, small) {
+    return h("a", { class: "btn" + (small ? " ghost" : ""), href: LIB_HOME, target: "_blank", rel: "noopener", title: "제목을 복사하고 대구대학교 학술정보원을 열어요",
+      onclick: () => { try { navigator.clipboard.writeText(title).then(() => toast("『" + title + "』 제목을 복사했어요. 학술정보원 검색창에 붙여 넣어 주세요."), () => toast("학술정보원에서 『" + title + "』를 검색해 보세요.")); } catch (e) { toast("학술정보원에서 『" + title + "』를 검색해 보세요."); } } }, "대구대 도서관 ↗");
+  }
+
+  /* ---------- YouTube reading playlists (links found 2026-11-18) ---------- */
+  const PLAYLISTS = [
+    { m: "피아노", t: "[습관playlist] 매일 30분씩 책 읽을 때 듣기 좋은 음악 (광고 없음)", d: "잔잔한 피아노", u: "https://www.youtube.com/watch?v=22uX6mK0PEw" },
+    { m: "피아노", t: "독서에 몰입되는 음악 · 잔잔한 피아노 & 자연 사운드", d: "피아노와 자연의 소리", u: "https://www.youtube.com/watch?v=WosjcFTkJ1w" },
+    { m: "피아노", t: "편안한 피아노 음악 · 장작 타는 소리 ASMR", d: "피아노와 모닥불 소리", u: "https://www.youtube.com/watch?v=99LoqqPuALU" },
+    { m: "재즈·카페", t: "[Playlist] 독서할 때 듣는 집중력 높이는 음악 (중간광고 없음)", d: "직접 연주한 재즈", u: "https://www.youtube.com/watch?v=0QmTzpr7qGY" },
+    { m: "재즈·카페", t: "책 읽을 때 듣기 좋은 음악 모음 · 책방에서 틀기 좋은 음악", d: "북카페·서점 분위기", u: "https://www.youtube.com/watch?v=cr5kcR78lGQ" },
+    { m: "재즈·카페", t: "책 읽을 때 듣기 좋은 음악 모음 #2 · 북카페 힐링음악", d: "북카페 분위기", u: "https://www.youtube.com/watch?v=kbMfSYKE-qk" },
+    { m: "가사 없는 곡", t: "[Playlist] 책 읽을 때 듣기 좋은 가사 없는 노래들 #2", d: "잔잔한 힐링 연주곡", u: "https://www.youtube.com/watch?v=K3a_TkMAD2o" },
+    { m: "가사 없는 곡", t: "Chill Reading Music · 독서용 재생목록", d: "영어권 독서 플레이리스트", u: "https://www.youtube.com/playlist?list=PLlCUMsnAMKUnBQm7Ub4y0EhvnNfO0riEN" },
+    { m: "로파이", t: "Lofi Girl 채널 · 공부·독서용 로파이 라이브", d: "채널의 ‘라이브’ 탭에서 24시간 방송", u: "https://www.youtube.com/@LofiGirl" },
+  ];
+  let plMood = "전체";
+  function renderPlaylists() {
+    const moods = ["전체", ...new Set(PLAYLISTS.map((x) => x.m))];
+    $("#pl-chips").replaceChildren(...moods.map((m) => h("button", { type: "button", class: "chip", "aria-pressed": String(m === plMood), onclick: () => { plMood = m; renderPlaylists(); } }, m)));
+    $("#pl-list").replaceChildren(...PLAYLISTS.filter((x) => plMood === "전체" || x.m === plMood).map((x) => h("a", { class: "pl", href: x.u, target: "_blank", rel: "noopener" },
+      h("span", { class: "play", "aria-hidden": "true" }, "▶"), h("div", null, h("b", null, x.t), h("span", null, x.m + " · " + x.d + " · 유튜브 ↗")))));
+  }
+  renderPlaylists();
+  $("#bgm-yt").addEventListener("click", () => { togglePanel(false); go("new"); setTimeout(() => $("#plist").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }), 50); });
+
+  /* ---------- recommended carousel ---------- */
+  const isReco = (b) => b.recommend === true || (b.recommend !== false && b.rating >= 4);
+  const track = $("#reco-track");
+  function recoMetrics() {
+    const first = track.firstElementChild; if (!first || !first.classList.contains("slide")) return null;
+    const gap = 14, w = first.getBoundingClientRect().width + gap, n = track.querySelectorAll(".slide").length;
+    const perView = Math.max(1, Math.round((track.clientWidth + gap) / w)), pages = Math.max(1, n - perView + 1);
+    const idx = Math.min(pages - 1, Math.max(0, Math.round(track.scrollLeft / w)));
+    return { w, n, perView, pages, idx };
+  }
+  function updateDots() {
+    const m = recoMetrics(), dots = $("#reco-dots");
+    if (!m) { dots.replaceChildren(); $("#reco-prev").disabled = $("#reco-next").disabled = true; return; }
+    if (dots.children.length !== m.pages) dots.replaceChildren(...Array.from({ length: m.pages }, (_, i) => h("button", { type: "button", "aria-label": (i + 1) + "번째 책으로", onclick: () => recoGo(i) })));
+    [...dots.children].forEach((d, i) => d.setAttribute("aria-current", String(i === m.idx)));
+    dots.hidden = m.pages < 2; $("#reco-prev").disabled = m.idx <= 0; $("#reco-next").disabled = m.idx >= m.pages - 1;
+  }
+  function recoGo(i) { const m = recoMetrics(); if (!m) return; const k = Math.max(0, Math.min(m.pages - 1, i)); track.scrollTo({ left: k * m.w, behavior: reduce ? "auto" : "smooth" }); }
+  $("#reco-prev").addEventListener("click", () => { const m = recoMetrics(); if (m) recoGo(m.idx - 1); });
+  $("#reco-next").addEventListener("click", () => { const m = recoMetrics(); if (m) recoGo(m.idx + 1); });
+  let dotRaf = 0; track.addEventListener("scroll", () => { cancelAnimationFrame(dotRaf); dotRaf = requestAnimationFrame(updateDots); }, { passive: true });
+  track.addEventListener("keydown", (e) => { const m = recoMetrics(); if (!m) return; if (e.key === "ArrowRight") { e.preventDefault(); recoGo(m.idx + 1); } if (e.key === "ArrowLeft") { e.preventDefault(); recoGo(m.idx - 1); } });
+  new ResizeObserver(() => updateDots()).observe(track);
+  // mouse drag (touch already swipes natively)
+  let md = null;
+  track.addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse" || e.button !== 0) return; md = { x: e.clientX, left: track.scrollLeft, moved: false }; });
+  window.addEventListener("pointermove", (e) => { if (!md) return; const dx = e.clientX - md.x; if (Math.abs(dx) > 4) { md.moved = true; track.classList.add("drag"); } if (md.moved) track.scrollLeft = md.left - dx; });
+  window.addEventListener("pointerup", () => { if (!md) return; const moved = md.moved, start = md.left; md = null; track.classList.remove("drag");
+    if (moved) { const m = recoMetrics(); if (m) { const dir = track.scrollLeft - start; const base = Math.round(start / m.w); recoGo(Math.abs(dir) > m.w * 0.15 ? base + Math.sign(dir) : base); } } });
+  track.addEventListener("click", (e) => { if (track.classList.contains("drag")) e.preventDefault(); }, true);
+  function renderReco() {
+    const list = state.books.filter(isReco).sort((a, b) => (b.rating || 0) - (a.rating || 0) || (b.finishedAt || "").localeCompare(a.finishedAt || ""));
+    const keep = track.scrollLeft;
+    if (!list.length) { track.replaceChildren(h("p", { class: "empty", style: "flex: 1 0 100%" }, state.mode === "loading" ? "불러오는 중이에요." : "아직 추천한 책이 없어요. 책에 별점 4점 이상을 주거나 내 책장에서 ‘추천’을 눌러 보세요.")); updateDots(); return; }
+    track.replaceChildren(...list.map((b, i) => {
+      const slot = GSLOT[b.genre] ? "var(--s" + GSLOT[b.genre] + ")" : "var(--s-other)";
+      const cover = h("div", { class: "cover", style: "background: linear-gradient(160deg, color-mix(in srgb, " + slot + " 88%, #ffffff) 0%, " + slot + " 55%, color-mix(in srgb, " + slot + " 70%, #000000) 100%);" },
+        h("b", null, b.title), h("small", null, b.author || ""), b.plant && ITEMS[b.plant.type] ? miniCanvas(b.plant.type, 38, false) : null);
+      const q = (b.quotes || [])[0], agg = aggFor(b.title);
+      return h("article", { class: "slide", role: "group", "aria-roledescription": "slide", "aria-label": (i + 1) + " / " + list.length + ": " + b.title }, cover,
+        h("div", { class: "slide-body" },
+          h("div", { class: "meta" }, b.genre ? h("span", { class: "gtag" }, b.genre) : null, b.rating ? h("span", { class: "st" }, stars(b.rating)) : null, agg ? aggBadge(b.title) : null),
+          h("h3", null, b.title), b.author ? h("span", { class: "sub" }, b.author) : null,
+          b.why ? h("div", { class: "why-box" }, h("span", { class: "lbl" }, "추천하는 이유"), h("p", null, b.why)) : (b.review ? h("p", { class: "why", style: "margin:0" }, "“" + b.review + "”") : null),
+          q ? h("blockquote", null, "좋았던 구절 · " + q.text) : null,
+          h("div", { class: "acts" }, h("button", { type: "button", class: "btn", onclick: () => openReview(b) }, "평가 보기"), libLink(b.title, true))));
+    }));
+    track.scrollLeft = keep; requestAnimationFrame(updateDots);
+  }
+
+  /* ---------- motto typewriter: 60ms per character, blinking caret, stops after ~5s ---------- */
+  (function typewriter() {
+    const el = document.querySelector(".motto-k"); if (!el) return;
+    const full = el.textContent.trim(); el.setAttribute("aria-label", full);
+    if (reduce) return;
+    const typed = h("span", { "aria-hidden": "true" }), caret = h("span", { class: "caret", "aria-hidden": "true" });
+    el.replaceChildren(typed, caret);
+    const chars = Array.from(full); let i = 0;
+    const tm = setInterval(() => { typed.textContent += chars[i++]; if (i >= chars.length) clearInterval(tm); }, 60);
+    setTimeout(() => { clearInterval(tm); typed.textContent = full; caret.remove(); }, 5000);
+  })();
+
+  /* ---------- publishing stats + count-up (2s, thousands separators, starts when visible) ---------- */
+  const PUB_TOTAL = 64991;
+  const PUB_SHARES = [["문학", 22.4], ["사회과학", 18.9], ["아동", 12.3], ["기술과학", 10.7], ["만화", 8.5]];
+  (function buildPubBars() {
+    const max = PUB_SHARES[0][1];
+    $("#ps-bars").replaceChildren(...PUB_SHARES.map(([g, pct]) => h("div", { class: "psb", title: g + " " + pct + "% · 약 " + Math.round(PUB_TOTAL * pct / 100).toLocaleString("ko-KR") + "종" },
+      h("span", null, g), h("div", { class: "track" }, h("i", { "data-w": String((pct / max) * 100), style: "width:" + (pct / max) * 100 + "%" })),
+      h("b", null, h("span", { class: "cu", "data-to": String(pct), "data-dec": "1" }, pct.toFixed(1)), "%", h("small", null, "약 ", h("span", { class: "cu", "data-to": String(Math.round(PUB_TOTAL * pct / 100)) }, Math.round(PUB_TOTAL * pct / 100).toLocaleString("ko-KR")), "종")))));
+  })();
+  const fmtNum = (v, dec) => dec ? v.toLocaleString("ko-KR", { minimumFractionDigits: dec, maximumFractionDigits: dec }) : Math.round(v).toLocaleString("ko-KR");
+  function countUp(el) {
+    const to = Number(el.dataset.to), dec = Number(el.dataset.dec || 0);
+    if (reduce) { el.textContent = fmtNum(to, dec); return; }
+    const t0 = performance.now(), D = 2000, ease = (x) => 1 - Math.pow(1 - x, 3);
+    el.textContent = fmtNum(0, dec);
+    const stepFn = (now) => { const k = Math.min(1, (now - t0) / D); el.textContent = fmtNum(to * ease(k), dec); if (k < 1) requestAnimationFrame(stepFn); else el.textContent = fmtNum(to, dec); };
+    requestAnimationFrame(stepFn);
+  }
+  function revealBars(root) { root.querySelectorAll(".psb .track i").forEach((i) => { i.style.width = i.dataset.w + "%"; }); }
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => entries.forEach((en) => { if (!en.isIntersecting) return; io.unobserve(en.target);
+      if (en.target.classList.contains("cu")) countUp(en.target); else revealBars(en.target); }), { threshold: 0.4 });
+    document.querySelectorAll(".psb .track i").forEach((i) => { i.style.width = "0"; });
+    document.querySelectorAll(".pubstats .cu").forEach((el) => io.observe(el));
+    io.observe($("#ps-bars"));
+  } else { revealBars(document); }
+
+  /* ---------- reading goal ---------- */
+  const yearCount = () => { const y = String(new Date().getFullYear()); return state.books.filter((b) => (b.finishedAt || "").startsWith(y)).length; };
+  function renderGoal(yc, y) {
+    const box = $("#goal-box"), g = state.goal; box.replaceChildren();
+    if (state.editGoal) {
+      const inp = h("input", { type: "number", min: "1", max: "365", id: "goal-in", value: String(g), "aria-label": "올해 목표 권수" });
+      const save = async () => { const v = Math.max(1, Math.min(365, Math.round(Number(inp.value) || g))); state.editGoal = false;
+        if (backend && backend.setGoal) { if (await run(() => backend.setGoal(v))) toast("올해 목표를 " + v + "권으로 정했어요."); } else { state.goal = v; renderAll(); } };
+      inp.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); save(); } });
+      box.append(h("span", { class: "sub" }, y + "년 목표"), h("div", { class: "acts" }, inp, h("span", null, "권"), h("button", { type: "button", class: "btn", onclick: save }, "저장"),
+        h("button", { type: "button", class: "btn ghost", onclick: () => { state.editGoal = false; renderAll(); } }, "취소")));
+      return;
+    }
+    const pct = Math.min(100, Math.round((yc / g) * 100));
+    box.append(h("div", { class: "bar", role: "progressbar", "aria-valuemin": "0", "aria-valuemax": String(g), "aria-valuenow": String(yc), "aria-label": y + "년 독서 목표" }, h("i", { style: "width:" + pct + "%" })),
+      h("div", { class: "goal-row" }, h("span", { class: "sub" }, y + "년 목표 " + yc + " / " + g + "권" + (yc >= g ? " · 달성!" : "")),
+        h("button", { type: "button", class: "btn ghost", style: "padding: 2px 6px; font-size: 12px", onclick: () => { state.editGoal = true; renderAll(); const i = document.getElementById("goal-in"); if (i) { i.focus(); i.select(); } } }, "목표 바꾸기")));
+  }
+
+  /* ---------- confetti: 80 pieces burst up from a point, fall, gone within 2s ---------- */
+  function confetti(x, y) {
+    if (reduce) return;
+    const cv = h("canvas", { class: "confetti", "aria-hidden": "true" }); document.body.append(cv);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2), VW = window.innerWidth, VH = window.innerHeight;
+    cv.width = Math.round(VW * dpr); cv.height = Math.round(VH * dpr); const g = cv.getContext("2d"); g.scale(dpr, dpr);
+    const cs = getComputedStyle(document.documentElement);
+    const cols = ["--s1", "--s2", "--s3", "--s4", "--s5", "--s7", "--pop"].map((v) => cs.getPropertyValue(v).trim() || "#F2B544");
+    const P = Array.from({ length: 80 }, () => { const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.8, sp = 380 + Math.random() * 460;
+      return { x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 14, w: 6 + Math.random() * 5, hh: 3 + Math.random() * 4, c: cols[Math.floor(Math.random() * cols.length)], dot: Math.random() < 0.28 }; });
+    const t0 = performance.now(); let lt = t0;
+    function fr(now) {
+      const dt = Math.min(0.033, (now - lt) / 1000), age = (now - t0) / 1000; lt = now; g.clearRect(0, 0, VW, VH);
+      const alpha = age < 1.3 ? 1 : Math.max(0, 1 - (age - 1.3) / 0.6);
+      P.forEach((p) => { p.vy += 1150 * dt; p.vx *= 1 - 1.5 * dt; p.vy *= 1 - 0.5 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.r += p.vr * dt;
+        g.save(); g.globalAlpha = alpha; g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.c;
+        if (p.dot) { g.beginPath(); g.arc(0, 0, p.hh * 0.75, 0, Math.PI * 2); g.fill(); } else { g.scale(1, Math.abs(Math.cos(p.r * 1.7)) * 0.8 + 0.2); g.fillRect(-p.w / 2, -p.hh / 2, p.w, p.hh); }
+        g.restore(); });
+      if (age < 1.95) requestAnimationFrame(fr); else cv.remove();
+    }
+    requestAnimationFrame(fr);
+    setTimeout(() => { if (cv.isConnected) cv.remove(); }, 2100);
+  }
+
+  /* ---------- views ---------- */
+  const VIEWS = ["home", "write", "shelf", "new", "reviews"];
+  function go(v, push) {
+    if (!VIEWS.includes(v)) v = "home";
+    document.querySelectorAll(".view").forEach((el) => { el.hidden = el.dataset.view !== v; });
+    document.querySelectorAll("#menu button").forEach((b) => { if (b.dataset.go === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+    if (push !== false && location.hash !== "#" + v) { try { history.replaceState(null, "", "#" + v); } catch (e) { location.hash = v; } }
+    window.scrollTo({ top: 0, behavior: "auto" });
+    if (v === "home") requestAnimationFrame(() => { resize(); updateDots(); });
+  }
+  document.querySelectorAll("#menu button").forEach((b) => b.addEventListener("click", () => go(b.dataset.go)));
+  window.addEventListener("hashchange", () => go(location.hash.slice(1), false));
+
+  /* ---------- boot ---------- */
+  resetForm(); readTheme(); go(location.hash.slice(1) || "home", false); resize(); renderAll();
+  if (!reduce) requestAnimationFrame(frame);
+  (async () => {
+    let db = null, uid = null;
+    try { if (window.claude && window.claude.use) { db = await window.claude.use("db"); const user = await window.claude.use("user"); uid = user ? await user.id() : null; } } catch (e) { db = null; }
+    backend = db && uid ? dbBackend(db, uid) : localBackend;
+    state.uid = uid; try { if (window.claude && window.claude.use) state.userNS = await window.claude.use("user"); } catch (e) {}
+    backend.start(); if (backend.watchReviews) backend.watchReviews(); else { state.reviewsReady = true; } renderAll();
+  })();
+})();
+</script>
+
+</body>
+</html>
