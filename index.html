@@ -143,6 +143,37 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .bthumb { width: 46px; height: 62px; flex: none; object-fit: cover; border-radius: 4px 8px 8px 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.14); }
 .cover-field { display: flex; gap: 12px; align-items: center; }
 .cover-field img { width: 54px; height: 72px; object-fit: cover; border-radius: 4px 8px 8px 4px; }
+.gacha { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 25; display: grid; justify-items: center; gap: 2px; }
+.g-machine { position: relative; width: 92px; border: 0; padding: 0; background: none; cursor: pointer; filter: drop-shadow(0 8px 14px rgba(0,0,0,0.18)); }
+.g-machine svg { display: block; width: 100%; height: auto; overflow: visible; }
+.g-body { fill: var(--accent); } .g-shine { fill: rgba(255,255,255,0.14); } .g-chute { fill: #2a2a2e; } .g-rim { fill: var(--accent); }
+.g-dome { fill: color-mix(in srgb, var(--card) 55%, transparent); stroke: var(--line); stroke-width: 2; }
+.g-glint { fill: rgba(255,255,255,0.55); }
+.g-knobc { fill: var(--pop); stroke: rgba(0,0,0,0.15); stroke-width: 1; } .g-knobbar { fill: #FFFFFF; opacity: 0.9; }
+.g-knob { transform-origin: 48px 102px; transform-box: view-box; }
+.gacha.spin .g-knob { animation: gknob .9s cubic-bezier(.4,.1,.3,1); }
+.gacha.spin .g-caps { animation: gshake .9s ease-in-out; transform-origin: 48px 44px; transform-box: view-box; }
+@keyframes gknob { to { transform: rotate(360deg); } }
+@keyframes gshake { 0%, 100% { transform: translate(0, 0) rotate(0); } 20% { transform: translate(-2px, 1px) rotate(-6deg); } 40% { transform: translate(2px, -1px) rotate(5deg); } 60% { transform: translate(-1px, 2px) rotate(-4deg); } 80% { transform: translate(1px, -1px) rotate(3deg); } }
+.g-cap { position: absolute; left: 50%; top: 84%; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%; overflow: hidden; opacity: 0; pointer-events: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.g-cap i { display: block; height: 50%; } .g-cap i:last-child { background: #FFFFFF; }
+.gacha.drop .g-cap { animation: gdrop .55s cubic-bezier(.3,1.4,.5,1) forwards; }
+.gacha.pop .g-cap { animation: gpop .35s ease-out forwards; }
+@keyframes gdrop { from { opacity: 1; transform: translateY(-14px) scale(.7); } to { opacity: 1; transform: translateY(10px) scale(1); } }
+@keyframes gpop { from { opacity: 1; transform: translateY(10px) scale(1); } to { opacity: 0; transform: translateY(10px) scale(1.8); } }
+.g-label { font-size: 11px; font-weight: 600; color: var(--muted); background: var(--glass); border-radius: 999px; padding: 1px 8px; }
+.g-sel { font: inherit; font-size: 12px; font-weight: 600; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 3px 8px; cursor: pointer; max-width: 92px; }
+.g-min { position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--muted); cursor: pointer; font-size: 13px; line-height: 1; padding: 0; }
+.g-tab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 25; border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 8px 14px; font-weight: 600; font-size: 13px; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+.g-result { position: absolute; right: calc(100% + 10px); bottom: 10px; width: min(300px, calc(100vw - 150px)); background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; display: grid; gap: 6px; box-shadow: 0 16px 36px rgba(0,0,0,0.18); }
+.g-result .gtag { width: max-content; }
+.g-result p { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.6; overflow-wrap: anywhere; white-space: pre-line; }
+.g-result small { color: var(--muted); font-size: 12px; }
+.g-result.show { animation: gin .35s cubic-bezier(.3,1.3,.5,1); }
+@keyframes gin { from { opacity: 0; transform: translateY(8px) scale(.96); } }
+@media (max-width: 600px) { .g-machine { width: 66px; } .g-label { display: none; }
+  .g-result { right: 0; bottom: calc(100% + 8px); width: calc(100vw - 32px); } }
+@media (prefers-reduced-motion: reduce) { .gacha.spin .g-knob, .gacha.spin .g-caps, .gacha.drop .g-cap, .gacha.pop .g-cap, .g-result.show { animation: none; } }
 .gpick { display: flex; flex-wrap: wrap; gap: 6px; background: var(--card); border-radius: 14px; padding: 10px; }
 @media (max-width: 700px) { .bento.two { grid-template-columns: minmax(0, 1fr); } .menu button { font-size: 13.5px; padding: 9px 12px; } }
 .motto { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 2px 4px; }
@@ -150,19 +181,6 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .motto-k { font-family: var(--f-display); font-weight: 700; font-size: 15px; letter-spacing: -0.01em; color: var(--ink); }
 .motto-k::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--pop); margin-right: 8px; vertical-align: 2px; }
 .motto-s { font-size: 13px; color: var(--muted); }
-.draw { margin-left: auto; display: flex; align-items: center; gap: 6px; perspective: 900px; max-width: 100%; }
-.draw-card { position: relative; border: 0; padding: 0; background: none; cursor: pointer; width: min(320px, calc(100vw - 32px)); min-height: 64px; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.3,.7,.2,1); }
-.draw-card.open { transform: rotateY(180deg); }
-.draw-card > span { position: absolute; inset: 0; border-radius: 14px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; align-content: center; gap: 2px; padding: 10px 14px; text-align: left; }
-.draw-back { background: var(--accent); color: var(--accent-ink); grid-template-columns: 1fr auto; align-items: center;
-  background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.07) 0 6px, transparent 6px 12px); }
-.draw-back b { font-size: 14px; } .draw-back small { font-size: 12px; opacity: 0.8; }
-.draw-front { background: var(--card); border: 1px solid var(--line); color: var(--ink); transform: rotateY(180deg); }
-.draw-front .dq { font-size: 13.5px; font-weight: 600; line-height: 1.45; }
-.draw-front small { font-size: 11.5px; color: var(--muted); }
-.draw-card:not(.open):hover .draw-back { filter: brightness(1.08); }
-@media (max-width: 700px) { .draw { margin-left: 0; width: 100%; } .draw-card { width: 100%; } }
-@media (prefers-reduced-motion: reduce) { .draw-card { transition: none; } }
 .caret { display: inline-block; width: 2px; height: 1.05em; background: currentColor; margin-left: 3px; vertical-align: -0.16em; animation: caret 1s steps(1) infinite; }
 @keyframes caret { 50% { opacity: 0; } }
 .bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
@@ -331,13 +349,6 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
   <section class="motto" aria-label="나의 다짐">
     <p class="motto-k">꾸준함은 모든 것을 바꾼다</p>
     <p class="motto-s" id="motto-s">한 쪽씩, 한 권씩. 오늘 읽은 만큼 숲이 자라요.</p>
-    <div class="draw" id="draw">
-      <button type="button" class="draw-card" id="draw-card" aria-live="polite">
-        <span class="draw-back"><b>오늘의 문구</b><small>눌러서 뽑기</small></span>
-        <span class="draw-front"><span class="dq" id="draw-q"></span><small id="draw-a"></small></span>
-      </button>
-      <button type="button" class="btn ghost" id="draw-again" hidden>다시 뽑기</button>
-    </div>
   </section>
 
   <div class="bento">
@@ -496,6 +507,31 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
     <div class="r-mine" id="r-mine"></div>
   </div>
 </div>
+<aside class="gacha" id="gacha" aria-label="한 줄 뽑기 기계">
+  <div class="g-result" id="g-result" hidden>
+    <span class="gtag" id="g-cat"></span>
+    <p id="g-text"></p>
+    <small id="g-src"></small>
+    <div class="acts"><button type="button" class="btn primary" id="g-again" style="padding:7px 14px;font-size:13px">한 번 더 돌리기</button><button type="button" class="btn ghost" id="g-copy">복사</button><button type="button" class="btn ghost" id="g-close">닫기</button></div>
+  </div>
+  <button type="button" class="g-machine" id="g-machine" aria-label="손잡이를 돌려서 오늘의 한 줄 뽑기">
+    <svg viewBox="0 0 96 140" aria-hidden="true">
+      <rect x="14" y="78" width="68" height="58" rx="12" class="g-body"/>
+      <rect x="22" y="84" width="52" height="8" rx="4" class="g-shine"/>
+      <rect x="38" y="118" width="20" height="12" rx="3" class="g-chute"/>
+      <circle cx="48" cy="44" r="40" class="g-dome"/>
+      <g class="g-caps" id="g-caps"></g>
+      <ellipse cx="34" cy="26" rx="10" ry="6" class="g-glint"/>
+      <rect x="20" y="74" width="56" height="8" rx="4" class="g-rim"/>
+      <g class="g-knob" id="g-knob"><circle cx="48" cy="102" r="11" class="g-knobc"/><rect x="45.5" y="92" width="5" height="20" rx="2.5" class="g-knobbar"/></g>
+    </svg>
+    <span class="g-cap" id="g-cap" aria-hidden="true"><i></i><i></i></span>
+  </button>
+  <span class="g-label">돌려서 뽑기</span>
+  <select class="g-sel" id="g-sel" aria-label="뽑을 문구 종류"></select>
+  <button type="button" class="g-min" id="g-min" aria-label="뽑기 기계 접기">×</button>
+</aside>
+<button type="button" class="g-tab" id="g-tab" hidden>한 줄 뽑기</button>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script>
@@ -1897,41 +1933,102 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
     io.observe($("#ps-bars"));
   } else { revealBars(document); }
 
-  /* ---------- today's line: a small card to draw a quote or a cheer ---------- */
+  /* ---------- one-line gacha: turn the knob, a capsule drops, a line comes out ---------- */
   const LINES = [
-    ["하루라도 책을 읽지 않으면 입안에 가시가 돋는다.", "안중근"],
-    ["독서는 완성된 사람을, 토론은 준비된 사람을, 쓰기는 정확한 사람을 만든다.", "프랜시스 베이컨"],
-    ["좋은 책을 읽는 것은 지난 시대의 가장 훌륭한 사람들과 대화하는 것과 같다.", "르네 데카르트, 『방법서설』"],
-    ["배우기만 하고 생각하지 않으면 얻는 것이 없고, 생각하기만 하고 배우지 않으면 위태롭다.", "공자, 『논어』"],
-    ["중요한 것은 눈에 보이지 않아.", "생텍쥐페리, 『어린 왕자』"],
-    ["작은 기회로부터 종종 위대한 일이 시작된다.", "데모스테네스"],
-    ["아는 만큼 보인다.", "유홍준, 『나의 문화유산답사기』"],
-    ["천천히 가는 것을 두려워하지 말고, 멈추는 것을 두려워하라.", "중국 속담"],
-    ["낙숫물이 댓돌을 뚫는다.", "우리 속담"],
-    ["천 리 길도 한 걸음부터.", "우리 속담"],
-    ["시작이 반이다.", "우리 속담"],
-    ["책 속에 길이 있다.", "우리 속담"],
-    ["꾸준함은 모든 것을 바꾼다.", "나만의 책숲"],
-    ["오늘 읽은 한 쪽이 내일의 숲이 돼요.", "책숲의 응원"],
-    ["조금 느려도 괜찮아요. 멈추지만 않으면 숲은 자라요.", "책숲의 응원"],
-    ["어제보다 한 문장만 더 읽어도 충분해요.", "책숲의 응원"],
-    ["읽다 만 책도 괜찮아요. 다시 펼치는 순간 이야기는 이어져요.", "책숲의 응원"],
-    ["마음에 남은 한 줄이 오늘 하루를 붙잡아 줄 거예요.", "책숲의 응원"],
+    ["위로", "내일은 아직 아무 실수도 하지 않은 새로운 날이에요.", "L. M. 몽고메리, 『빨간 머리 앤』"],
+    ["위로", "사막이 아름다운 건 어딘가에 우물을 숨기고 있기 때문이야.", "생텍쥐페리, 『어린 왕자』"],
+    ["위로", "조금 느려도 괜찮아요. 멈추지만 않으면 숲은 자라요.", "책숲의 한마디"],
+    ["위로", "쉬어 가는 것도 길의 일부예요.", "책숲의 한마디"],
+    ["위로", "오늘 하루도 잘 버틴 당신, 충분히 잘하고 있어요.", "책숲의 한마디"],
+    ["위로", "읽다 만 책도 괜찮아요. 다시 펼치는 순간 이야기는 이어져요.", "책숲의 한마디"],
+    ["위로", "완벽하게 읽지 않아도 돼요. 마음에 닿은 한 줄이면 충분해요.", "책숲의 한마디"],
+    ["위로", "느린 독서는 깊은 독서예요. 서두르지 않아도 돼요.", "책숲의 한마디"],
+    ["위로", "마음에 남은 한 줄이 오늘 하루를 붙잡아 줄 거예요.", "책숲의 한마디"],
+    ["위로", "당신이 밑줄 그은 문장은 언젠가 당신을 지켜 줄 거예요.", "책숲의 한마디"],
+    ["용기", "꾸준함은 모든 것을 바꾼다.", "나만의 책숲"],
+    ["용기", "천천히 가는 것을 두려워하지 말고, 멈추는 것을 두려워하라.", "중국 속담"],
+    ["용기", "낙숫물이 댓돌을 뚫는다.", "우리 속담"],
+    ["용기", "천 리 길도 한 걸음부터.", "우리 속담"],
+    ["용기", "시작이 반이다.", "우리 속담"],
+    ["용기", "나는 폭풍이 두렵지 않아. 내 배를 항해하는 법을 배우고 있으니까.", "루이자 메이 올컷, 『작은 아씨들』"],
+    ["용기", "인간은 파멸당할 수는 있어도 패배하지는 않는다.", "어니스트 헤밍웨이, 『노인과 바다』"],
+    ["용기", "새는 알에서 나오려고 투쟁한다. 알은 세계이다. 태어나려는 자는 하나의 세계를 깨뜨려야 한다.", "헤르만 헤세, 『데미안』"],
+    ["용기", "무언가를 간절히 원할 때 온 우주는 네 소망이 이루어지도록 도와준다.", "파울로 코엘료, 『연금술사』"],
+    ["용기", "도로 전체를 한꺼번에 생각하면 안 돼. 다음 걸음, 다음 숨, 다음 비질만 생각하는 거야.", "미하엘 엔데, 『모모』"],
+    ["용기", "가장 높이 나는 새가 가장 멀리 본다.", "리처드 바크, 『갈매기의 꿈』"],
+    ["용기", "작은 성공을 크게 축하해 주세요. 그게 큰 변화를 만들어요.", "책숲의 한마디"],
+    ["용기", "비교는 남과 말고 어제의 나와 해요.", "책숲의 한마디"],
+    ["용기", "오늘 읽은 한 쪽이 내일의 숲이 돼요.", "책숲의 한마디"],
+    ["용기", "어제보다 한 문장만 더 읽어도 충분해요.", "책숲의 한마디"],
+    ["용기", "책장을 넘기는 지금 이 순간도 당신은 자라고 있어요.", "책숲의 한마디"],
+    ["사랑", "중요한 것은 눈에 보이지 않아.", "생텍쥐페리, 『어린 왕자』"],
+    ["사랑", "네가 길들인 것에 너는 언제까지나 책임이 있어.", "생텍쥐페리, 『어린 왕자』"],
+    ["사랑", "네가 오후 네 시에 온다면 나는 세 시부터 행복해지기 시작할 거야.", "생텍쥐페리, 『어린 왕자』"],
+    ["사랑", "사랑은 서로 마주 보는 것이 아니라 함께 같은 방향을 바라보는 것이다.", "생텍쥐페리, 『인간의 대지』"],
+    ["사랑", "자세히 보아야 예쁘다\n오래 보아야 사랑스럽다\n너도 그렇다", "나태주, 「풀꽃」"],
+    ["사랑", "좋아하는 책을 건네는 건 마음 한 조각을 건네는 일이에요.", "책숲의 한마디"],
+    ["사랑", "사랑하는 사람에게 읽어 주고 싶은 문장이 생겼다면, 이미 좋은 독서를 한 거예요.", "책숲의 한마디"],
+    ["유머", "개를 빼면 책은 인간의 가장 좋은 친구다. 개 속은 너무 어두워서 책을 읽을 수가 없으니까.", "그루초 막스"],
+    ["유머", "고전이란 모두가 칭찬은 하지만 아무도 읽지는 않는 책이다.", "마크 트웨인"],
+    ["유머", "‘딱 한 챕터만 더…’라고 말한 지 벌써 세 챕터째예요.", "책숲의 농담"],
+    ["유머", "책을 사는 것과 책을 읽는 것은 서로 다른 취미예요. 둘 다 훌륭하고요.", "책숲의 농담"],
+    ["유머", "쌓아 둔 책도 독서예요. 아직 펼치지 않았을 뿐이에요.", "책숲의 농담"],
+    ["유머", "책갈피는 내일의 나에게 보내는 쪽지예요. 내일의 나는 대개 못 봐요.", "책숲의 농담"],
+    ["명언", "하루라도 책을 읽지 않으면 입안에 가시가 돋는다.", "안중근"],
+    ["명언", "독서는 완성된 사람을, 토론은 준비된 사람을, 쓰기는 정확한 사람을 만든다.", "프랜시스 베이컨"],
+    ["명언", "좋은 책을 읽는 것은 지난 시대의 가장 훌륭한 사람들과 대화하는 것과 같다.", "르네 데카르트, 『방법서설』"],
+    ["명언", "배우기만 하고 생각하지 않으면 얻는 것이 없고, 생각하기만 하고 배우지 않으면 위태롭다.", "공자, 『논어』"],
+    ["명언", "작은 기회로부터 종종 위대한 일이 시작된다.", "데모스테네스"],
+    ["명언", "아는 만큼 보인다.", "유홍준, 『나의 문화유산답사기』"],
+    ["명언", "책 속에 길이 있다.", "우리 속담"],
+    ["책 구절", "그렇게 우리는 물결을 거스르는 배처럼, 끊임없이 과거로 떠밀려 가면서도 앞으로 나아간다.", "F. 스콧 피츠제럴드, 『위대한 개츠비』"],
+    ["책 구절", "나는 숲으로 갔다. 삶을 의도적으로 살고 싶었기 때문이다.", "헨리 데이비드 소로, 『월든』"],
+    ["책 구절", "우리가 진정 누구인지 보여 주는 것은 능력이 아니라 우리의 선택이란다.", "J. K. 롤링, 『해리 포터와 비밀의 방』"],
+    ["책 구절", "죽는 날까지 하늘을 우러러\n한 점 부끄럼이 없기를", "윤동주, 「서시」"],
   ];
-  (function drawer() {
-    const card = $("#draw-card"), again = $("#draw-again"), today = todayStr(); let idx = -1;
-    try { const saved = JSON.parse(localStorage.getItem("chaekmadang-draw") || "null"); if (saved && saved.d === today && LINES[saved.i]) idx = saved.i; } catch (e) {}
-    function show(i, animate) {
-      idx = i; $("#draw-q").textContent = "“" + LINES[i][0] + "”"; $("#draw-a").textContent = "— " + LINES[i][1];
-      card.setAttribute("aria-label", "오늘의 문구: " + LINES[i][0] + " " + LINES[i][1]);
-      if (animate && card.classList.contains("open")) { card.classList.remove("open"); setTimeout(() => card.classList.add("open"), reduce ? 0 : 320); } else card.classList.add("open");
-      again.hidden = false; try { localStorage.setItem("chaekmadang-draw", JSON.stringify({ d: today, i })); } catch (e) {}
+  const LINE_CATS = ["위로", "용기", "사랑", "유머", "명언", "책 구절"];
+  (function gacha() {
+    const box = $("#gacha"), res = $("#g-result"), caps = $("#g-caps"), cap = $("#g-cap");
+    const CAPC = ["var(--s1)", "var(--s2)", "var(--s3)", "var(--s4)", "var(--s5)", "var(--s7)", "var(--pop)"];
+    const NS = "http://www.w3.org/2000/svg";
+    [[30, 52], [44, 60], [58, 54], [70, 44], [26, 38], [40, 44], [54, 38], [64, 62], [36, 66], [50, 26], [62, 28], [22, 56]].forEach(([x, y], i) => {
+      const g = document.createElementNS(NS, "g"), c1 = document.createElementNS(NS, "circle"), c2 = document.createElementNS(NS, "path");
+      c1.setAttribute("cx", x); c1.setAttribute("cy", y); c1.setAttribute("r", 8); c1.setAttribute("fill", "#FFFFFF"); c1.setAttribute("stroke", "rgba(0,0,0,0.12)");
+      c2.setAttribute("d", "M" + (x - 8) + " " + y + " a8 8 0 0 1 16 0 z"); c2.setAttribute("style", "fill:" + CAPC[i % CAPC.length]);
+      g.append(c1, c2); caps.append(g); });
+    const store = (k, v) => { try { v === undefined ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} };
+    let minimized = false; try { minimized = localStorage.getItem("chaekmadang-gacha-min") === "1"; } catch (e) {}
+    const setMin = (m) => { minimized = m; box.hidden = m; $("#g-tab").hidden = !m; store("chaekmadang-gacha-min", m ? "1" : undefined); };
+    setMin(minimized);
+    let busy = false, last = -1, cat = "전체";
+    try { const c = localStorage.getItem("chaekmadang-gacha-cat"); if (c && LINE_CATS.includes(c)) cat = c; } catch (e) {}
+    const sel = $("#g-sel");
+    sel.replaceChildren(...["전체", ...LINE_CATS].map((c) => { const o = h("option", { value: c }, c === "전체" ? "전체 (" + LINES.length + ")" : c + " (" + LINES.filter((l) => l[0] === c).length + ")"); if (c === cat) o.selected = true; return o; }));
+    sel.addEventListener("change", () => { cat = sel.value; store("chaekmadang-gacha-cat", cat === "전체" ? undefined : cat); });
+    function show(i) {
+      const [cat, text, src] = LINES[i]; $("#g-cat").textContent = cat; $("#g-text").textContent = text; $("#g-src").textContent = "— " + src;
+      res.hidden = false; res.classList.remove("show"); void res.offsetWidth; res.classList.add("show"); $("#g-again").focus({ preventScroll: true });
     }
-    const pickNew = () => { let i; do { i = Math.floor(Math.random() * LINES.length); } while (LINES.length > 1 && i === idx); return i; };
-    card.setAttribute("aria-label", "오늘의 문구 뽑기");
-    card.addEventListener("click", () => { if (!card.classList.contains("open")) { show(idx >= 0 ? idx : pickNew(), false); } });
-    again.addEventListener("click", () => show(pickNew(), true));
-    if (idx >= 0) { $("#draw-q").textContent = "“" + LINES[idx][0] + "”"; $("#draw-a").textContent = "— " + LINES[idx][1]; }
+    function spin() {
+      if (busy) return; busy = true;
+      const pool = LINES.map((l, k) => k).filter((k) => cat === "전체" || LINES[k][0] === cat);
+      let i; do { i = pool[Math.floor(Math.random() * pool.length)]; } while (i === last && pool.length > 1); last = i;
+      const col = CAPC[Math.floor(Math.random() * CAPC.length)]; cap.firstElementChild.style.background = col;
+      res.hidden = true;
+      if (reduce) { show(i); busy = false; return; }
+      box.classList.remove("drop", "pop"); box.classList.add("spin");
+      setTimeout(() => { box.classList.remove("spin"); box.classList.add("drop"); }, 900);
+      setTimeout(() => { box.classList.remove("drop"); box.classList.add("pop"); show(i); }, 1500);
+      setTimeout(() => { box.classList.remove("pop"); busy = false; }, 1900);
+    }
+    $("#g-machine").addEventListener("click", spin);
+    $("#g-again").addEventListener("click", spin);
+    $("#g-close").addEventListener("click", () => { res.hidden = true; $("#g-machine").focus({ preventScroll: true }); });
+    $("#g-copy").addEventListener("click", () => { const t = $("#g-text").textContent + " " + $("#g-src").textContent;
+      try { navigator.clipboard.writeText(t).then(() => toast("문구를 복사했어요."), () => toast("복사하지 못했어요. 문구를 길게 눌러 복사해 주세요.")); } catch (e) { toast("복사하지 못했어요."); } });
+    $("#g-min").addEventListener("click", () => { res.hidden = true; setMin(true); });
+    $("#g-tab").addEventListener("click", () => { setMin(false); spin(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !res.hidden) res.hidden = true; });
   })();
 
   /* ---------- reading goal ---------- */
