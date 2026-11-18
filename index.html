@@ -150,6 +150,19 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .motto-k { font-family: var(--f-display); font-weight: 700; font-size: 15px; letter-spacing: -0.01em; color: var(--ink); }
 .motto-k::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--pop); margin-right: 8px; vertical-align: 2px; }
 .motto-s { font-size: 13px; color: var(--muted); }
+.draw { margin-left: auto; display: flex; align-items: center; gap: 6px; perspective: 900px; max-width: 100%; }
+.draw-card { position: relative; border: 0; padding: 0; background: none; cursor: pointer; width: min(320px, calc(100vw - 32px)); min-height: 64px; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.3,.7,.2,1); }
+.draw-card.open { transform: rotateY(180deg); }
+.draw-card > span { position: absolute; inset: 0; border-radius: 14px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; align-content: center; gap: 2px; padding: 10px 14px; text-align: left; }
+.draw-back { background: var(--accent); color: var(--accent-ink); grid-template-columns: 1fr auto; align-items: center;
+  background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.07) 0 6px, transparent 6px 12px); }
+.draw-back b { font-size: 14px; } .draw-back small { font-size: 12px; opacity: 0.8; }
+.draw-front { background: var(--card); border: 1px solid var(--line); color: var(--ink); transform: rotateY(180deg); }
+.draw-front .dq { font-size: 13.5px; font-weight: 600; line-height: 1.45; }
+.draw-front small { font-size: 11.5px; color: var(--muted); }
+.draw-card:not(.open):hover .draw-back { filter: brightness(1.08); }
+@media (max-width: 700px) { .draw { margin-left: 0; width: 100%; } .draw-card { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .draw-card { transition: none; } }
 .caret { display: inline-block; width: 2px; height: 1.05em; background: currentColor; margin-left: 3px; vertical-align: -0.16em; animation: caret 1s steps(1) infinite; }
 @keyframes caret { 50% { opacity: 0; } }
 .bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
@@ -318,6 +331,13 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
   <section class="motto" aria-label="나의 다짐">
     <p class="motto-k">꾸준함은 모든 것을 바꾼다</p>
     <p class="motto-s" id="motto-s">한 쪽씩, 한 권씩. 오늘 읽은 만큼 숲이 자라요.</p>
+    <div class="draw" id="draw">
+      <button type="button" class="draw-card" id="draw-card" aria-live="polite">
+        <span class="draw-back"><b>오늘의 문구</b><small>눌러서 뽑기</small></span>
+        <span class="draw-front"><span class="dq" id="draw-q"></span><small id="draw-a"></small></span>
+      </button>
+      <button type="button" class="btn ghost" id="draw-again" hidden>다시 뽑기</button>
+    </div>
   </section>
 
   <div class="bento">
@@ -1876,6 +1896,43 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
     document.querySelectorAll(".pubstats .cu").forEach((el) => io.observe(el));
     io.observe($("#ps-bars"));
   } else { revealBars(document); }
+
+  /* ---------- today's line: a small card to draw a quote or a cheer ---------- */
+  const LINES = [
+    ["하루라도 책을 읽지 않으면 입안에 가시가 돋는다.", "안중근"],
+    ["독서는 완성된 사람을, 토론은 준비된 사람을, 쓰기는 정확한 사람을 만든다.", "프랜시스 베이컨"],
+    ["좋은 책을 읽는 것은 지난 시대의 가장 훌륭한 사람들과 대화하는 것과 같다.", "르네 데카르트, 『방법서설』"],
+    ["배우기만 하고 생각하지 않으면 얻는 것이 없고, 생각하기만 하고 배우지 않으면 위태롭다.", "공자, 『논어』"],
+    ["중요한 것은 눈에 보이지 않아.", "생텍쥐페리, 『어린 왕자』"],
+    ["작은 기회로부터 종종 위대한 일이 시작된다.", "데모스테네스"],
+    ["아는 만큼 보인다.", "유홍준, 『나의 문화유산답사기』"],
+    ["천천히 가는 것을 두려워하지 말고, 멈추는 것을 두려워하라.", "중국 속담"],
+    ["낙숫물이 댓돌을 뚫는다.", "우리 속담"],
+    ["천 리 길도 한 걸음부터.", "우리 속담"],
+    ["시작이 반이다.", "우리 속담"],
+    ["책 속에 길이 있다.", "우리 속담"],
+    ["꾸준함은 모든 것을 바꾼다.", "나만의 책숲"],
+    ["오늘 읽은 한 쪽이 내일의 숲이 돼요.", "책숲의 응원"],
+    ["조금 느려도 괜찮아요. 멈추지만 않으면 숲은 자라요.", "책숲의 응원"],
+    ["어제보다 한 문장만 더 읽어도 충분해요.", "책숲의 응원"],
+    ["읽다 만 책도 괜찮아요. 다시 펼치는 순간 이야기는 이어져요.", "책숲의 응원"],
+    ["마음에 남은 한 줄이 오늘 하루를 붙잡아 줄 거예요.", "책숲의 응원"],
+  ];
+  (function drawer() {
+    const card = $("#draw-card"), again = $("#draw-again"), today = todayStr(); let idx = -1;
+    try { const saved = JSON.parse(localStorage.getItem("chaekmadang-draw") || "null"); if (saved && saved.d === today && LINES[saved.i]) idx = saved.i; } catch (e) {}
+    function show(i, animate) {
+      idx = i; $("#draw-q").textContent = "“" + LINES[i][0] + "”"; $("#draw-a").textContent = "— " + LINES[i][1];
+      card.setAttribute("aria-label", "오늘의 문구: " + LINES[i][0] + " " + LINES[i][1]);
+      if (animate && card.classList.contains("open")) { card.classList.remove("open"); setTimeout(() => card.classList.add("open"), reduce ? 0 : 320); } else card.classList.add("open");
+      again.hidden = false; try { localStorage.setItem("chaekmadang-draw", JSON.stringify({ d: today, i })); } catch (e) {}
+    }
+    const pickNew = () => { let i; do { i = Math.floor(Math.random() * LINES.length); } while (LINES.length > 1 && i === idx); return i; };
+    card.setAttribute("aria-label", "오늘의 문구 뽑기");
+    card.addEventListener("click", () => { if (!card.classList.contains("open")) { show(idx >= 0 ? idx : pickNew(), false); } });
+    again.addEventListener("click", () => show(pickNew(), true));
+    if (idx >= 0) { $("#draw-q").textContent = "“" + LINES[idx][0] + "”"; $("#draw-a").textContent = "— " + LINES[idx][1]; }
+  })();
 
   /* ---------- reading goal ---------- */
   const yearCount = () => { const y = String(new Date().getFullYear()); return state.books.filter((b) => (b.finishedAt || "").startsWith(y)).length; };
