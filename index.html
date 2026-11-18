@@ -13,8 +13,8 @@
 <style>
 /* Layout: bento grid — a full-width living forest tile with a background strip, stat tiles, a "new books" shelf, then record form beside my bookshelf. */
 :root {
-  --bg: #F7F8FC; --card: #FFFFFF; --card2: #F1F3FA; --ink: #1E2130; --muted: #676C80; --line: #E3E6F0;
-  --accent: #5468E8; --accent-ink: #FFFFFF; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #C2412D; --glass: rgba(255,255,255,0.78);
+  --bg: #FFF8F9; --card: #FFFFFF; --card2: #FFF0F3; --ink: #2E2228; --muted: #7A6670; --line: #F3DDE3;
+  --accent: #F4A6C0; --accent-ink: #3B1F2B; --pop: #FFD978; --pop-ink: #3A2A06; --danger: #C2412D; --glass: rgba(255,255,255,0.78);
   --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948; --s-other: #a3a39c;
   --f-display: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --f-num: "Bricolage Grotesque", "Noto Sans KR", system-ui, sans-serif;
@@ -22,14 +22,14 @@
   --night: 0;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #14161F; --card: #1C1F2B; --card2: #242836; --ink: #EEF0F7; --muted: #A0A5B8; --line: #30354A;
-  --accent: #9DAAFF; --accent-ink: #141833; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #F08A72; --glass: rgba(28,31,43,0.8);
+  --bg: #1A1418; --card: #241C21; --card2: #2D2329; --ink: #F7ECF0; --muted: #B8A3AD; --line: #3D2F36;
+  --accent: #F4A6C0; --accent-ink: #2B141E; --pop: #FFD978; --pop-ink: #3A2A06; --danger: #F08A72; --glass: rgba(36,28,33,0.8);
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767; --s-other: #6b6b66;
   --night: 1; color-scheme: dark;
 } }
 :root[data-theme="dark"] {
-  --bg: #14161F; --card: #1C1F2B; --card2: #242836; --ink: #EEF0F7; --muted: #A0A5B8; --line: #30354A;
-  --accent: #9DAAFF; --accent-ink: #141833; --pop: #F2B544; --pop-ink: #2A1C04; --danger: #F08A72; --glass: rgba(28,31,43,0.8);
+  --bg: #1A1418; --card: #241C21; --card2: #2D2329; --ink: #F7ECF0; --muted: #B8A3AD; --line: #3D2F36;
+  --accent: #F4A6C0; --accent-ink: #2B141E; --pop: #FFD978; --pop-ink: #3A2A06; --danger: #F08A72; --glass: rgba(36,28,33,0.8);
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767; --s-other: #6b6b66;
   --night: 1; color-scheme: dark;
 }
@@ -42,7 +42,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 700; letter-spacing: -0
 h2 { font-size: 22px; line-height: 1.2; }
 h3 { font-size: 18px; line-height: 1.3; }
 button, input, textarea { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 a { color: inherit; }
 
 .top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-block: 4px; }
@@ -146,7 +146,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .gacha { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 25; display: grid; justify-items: center; gap: 2px; }
 .g-machine { position: relative; width: 92px; border: 0; padding: 0; background: none; cursor: pointer; filter: drop-shadow(0 8px 14px rgba(0,0,0,0.18)); }
 .g-machine svg { display: block; width: 100%; height: auto; overflow: visible; }
-.g-body { fill: var(--accent); } .g-shine { fill: rgba(255,255,255,0.14); } .g-chute { fill: color-mix(in srgb, var(--accent) 45%, #1E2130); } .g-rim { fill: var(--accent); }
+.g-body { fill: var(--accent); } .g-shine { fill: rgba(255,255,255,0.14); } .g-chute { fill: color-mix(in srgb, var(--accent) 45%, #3B1F2B); } .g-rim { fill: var(--accent); }
 .g-dome { fill: color-mix(in srgb, var(--card) 55%, transparent); stroke: var(--line); stroke-width: 2; }
 .g-glint { fill: rgba(255,255,255,0.55); }
 .g-knobc { fill: var(--pop); stroke: rgba(0,0,0,0.15); stroke-width: 1; } .g-knobbar { fill: #FFFFFF; opacity: 0.9; }
@@ -303,7 +303,7 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
 .modal { position: fixed; inset: 0; background: rgba(8, 14, 10, 0.5); display: grid; place-items: center; z-index: 30;
   padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .modal .panel { width: min(560px, 100%); max-height: 100%; overflow: auto; }
-.toast { box-shadow: 0 8px 24px rgba(30,33,48,0.22); position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+.toast { box-shadow: 0 8px 24px rgba(59,31,43,0.22); position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px));
   background: var(--ink); color: var(--bg); padding: 11px 20px; border-radius: 999px; font-weight: 600; z-index: 40; max-width: calc(100% - 32px); text-align: center; }
 
 @media (max-width: 900px) {
